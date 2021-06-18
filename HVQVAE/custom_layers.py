@@ -27,7 +27,7 @@ class VectorQuantizer(keras.layers.Layer):
 
 class CBAM(keras.layers.Layer):
 
-    """Implements Covolutional Bloack Attention Module as arXiv:1807.06521""
+    """Implements Covolutional Bloack Attention Module as arXiv:1807.06521"""
 
     def __init__(self, filter_size, activation=tf.keras.activations.relu, dilation=1, kernel_size=3, bottleneck_reduction=4):
         super(CBAM, self).__init__()
