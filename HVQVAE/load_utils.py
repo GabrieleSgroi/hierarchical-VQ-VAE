@@ -40,7 +40,7 @@ def load_mid_encoder():
 
 def load_bot_encoder():
     encoder=build_bot_encoder([image_shape[0]//T_reduction,image_shape[1]//T_reduction,DT],[image_shape[0]//M_reduction,image_shape[1]//M_reduction,DM],image_shape, DB, Bencoder_layers)
-    weights_dir=current_path+"/hvqvae_weights/bot_encoder.h5"
+    weights_dir=current_path+"/hvqvae_weights/bottom_encoder.h5"
     encoder.load_weights(weights_dir)    
     print("Bot encoder loaded")
     return encoder
@@ -62,7 +62,7 @@ def load_mid_quantizer():
 
 def load_bot_quantizer():
     quantizer=build_quantizer(B_dim,DB,KB, bot_beta, level='bot')
-    weights_dir=current_path+"/hvqvae_weights/bot_quantizer.h5"
+    weights_dir=current_path+"/hvqvae_weights/bottom_quantizer.h5"
     quantizer.load_weights(weights_dir)
     print("Bot quantizer Loaded")
     return quantizer
