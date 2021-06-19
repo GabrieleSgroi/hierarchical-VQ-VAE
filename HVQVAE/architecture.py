@@ -159,7 +159,6 @@ def build_decoder(T_shape,M_shape, B_shape, layers=[32,32]):
     bot_latent=res_block(bot_latent,filters=256, attention_dilation=5, attention_kernel=5)
     #bot_latent=res_block(bot_latent,filters=256, attention_dilation=5, attention_kernel=5)
 
-    #Bot_vector=res_block(Bot_vector,filters=256) #last addition, take out if it takes too much time
     for i, filters in enumerate(layers):
            bot_latent = Conv2DTranspose(filters=filters, kernel_size=4, strides=2, padding="same", 
                                         activation=ACT, name="convT{}".format(i + 1))(bot_latent)
@@ -185,10 +184,8 @@ def build_VQVAE():
 
 def load_top_encoder():
     top_encoder=build_top_encoder(image_shape,DT,Tencoder_layers)
-    current_path = os.path.dirname(os.path.realpath(__file__))
-    print(current_path)
-    weights_dir=current_path+"/hvqvae_weights/top_encoder.h5"
-    top_encoder.load_weights(weights_dir)
+    top_encoder.load_weights("hvqvae_weights/top_encoder.h5")
+    print("Top encoder loaded")
     return top_encoder
 
 top_encoder=build_top_encoder(image_shape,DT,Tencoder_layers)
