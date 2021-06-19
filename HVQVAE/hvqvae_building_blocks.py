@@ -1,6 +1,6 @@
 import tensorflow as tf
 import HVQVAE.hyperparameters as hyper
-from HVQVAE.custom_layers import VectorQuantizer, CBAM, 
+from HVQVAE.custom_layers import VectorQuantizer, CBAM
 
 KT=hyper.KT               
 DT=hyper.DT                
