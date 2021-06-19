@@ -1,3 +1,6 @@
+import tensorflow as tf
+import numpy as np
+
 class VectorQuantizer(tf.keras.layers.Layer):  
 
     """ Implements the Vector Quantizer, the layer returns directly the quantized indices z_q"""
