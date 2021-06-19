@@ -1,1 +1,1 @@
-import HVQVAE.hvqvae_arch
+import HVQVAE.hvqvae_architecture
