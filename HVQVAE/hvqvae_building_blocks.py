@@ -1,7 +1,13 @@
 import tensorflow as tf
-import HVQVAE.hyperparameters
+import HVQVAE.hyperparameters as hyper
 from HVQVAE.custom_layers import VectorQuantizer, CBAM, 
 
+KT=hyper.KT               
+DT=hyper.DT                
+KM=hyper.KM                
+DM=hyper.DM                
+KB=hyper.KB               
+DB=hyper.DB
 
 
 # Weights for the commitment loss
