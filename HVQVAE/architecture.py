@@ -2,42 +2,11 @@
 encoders, quantizers and decoders"""
 
 import tensorflow as tf
-import os
-import HVQVAE.hyperparameters as hyper
 from HVQVAE.custom_layers import VectorQuantizer, CBAM
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Concatenate, BatchNormalization, Lambda
 from tensorflow.keras import Model
 
-current_path = os.path.dirname(os.path.realpath(__file__))
-
-KT=hyper.KT               
-DT=hyper.DT                
-KM=hyper.KM                
-DM=hyper.DM                
-KB=hyper.KB               
-DB=hyper.DB
-
 ACT=tf.keras.layers.ELU(alpha=0.1)
-
-
-# Weights for the commitment loss
-top_beta=0.25
-mid_beta=0.25
-bot_beta=0.25             
-
-Tencoder_layers= [128,128,128,128,128]      #Strided layers for the top-level encoder    
-Mencoder_layers=[128,128,128,128]       #Strided layers for the mid-level encoder
-Bencoder_layers=[128,128,128]           #Strided layers for the bottom-level encoder
-Bdecoder_layers=[256,256,256]           #Strided layers for the decoder
-img_size=512
-color_channels=3
-image_shape=[img_size,img_size,color_channels]
-T_reduction=2**len(Tencoder_layers)
-T_dim=[image_shape[0]//T_reduction, image_shape[1]//T_reduction]
-M_reduction=2**len(Mencoder_layers)
-M_dim=[image_shape[0]//M_reduction, image_shape[1]//M_reduction]
-B_reduction=2**len(Bencoder_layers)
-B_dim=[image_shape[0]//B_reduction, image_shape[1]//B_reduction]
 
 def res_block(inputs, filters, attention_dilation=1, attention_kernel=3):
 
