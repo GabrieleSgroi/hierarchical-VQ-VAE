@@ -5,6 +5,8 @@ import tensorflow as tf
 import HVQVAE.hyperparameters as hyper
 from HVQVAE.custom_layers import VectorQuantizer, CBAM
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Concatenate, BatchNormalization
+from tensorflow.keras import Model
+
 
 KT=hyper.KT               
 DT=hyper.DT                
