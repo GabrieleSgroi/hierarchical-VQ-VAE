@@ -20,10 +20,10 @@ class VectorQuantizer(tf.keras.layers.Layer):
         # Map z_e of shape (b, w,, h, d) to indices in the codebook
         self.lookup_ = tf.reshape(self.codebook, shape=(1, 1, 1, self.k, self.d))
         z_e = tf.expand_dims(inputs, -2)
-        dist = tf.norm(z_e - lookup_, axis=-1)
+        dist = tf.norm(z_e - self.lookup_, axis=-1)
         k_index = tf.argmin(dist, axis=-1)
         k_index_one_hot = tf.one_hot(k_index, self.k)
-        z_q = lookup_ * k_index_one_hot[..., None]
+        z_q = self.lookup_ * k_index_one_hot[..., None]
         z_q = tf.reduce_sum(z_q, axis=-2)
         return z_q
     
