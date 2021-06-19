@@ -10,8 +10,7 @@ class VectorQuantizer(tf.keras.layers.Layer):
     
     def build(self, input_shape):
         self.d = int(input_shape[-1])
-        rand_init = tf.
-        .initializers.VarianceScaling(distribution="uniform")
+        rand_init = tf.keras.initializers.VarianceScaling(distribution="uniform")
         self.codebook = self.add_weight(name='w',shape=(self.k, self.d), initializer=rand_init, trainable=True)
         
     def call(self, inputs):
