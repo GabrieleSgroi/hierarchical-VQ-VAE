@@ -187,6 +187,7 @@ def load_top_encoder():
     top_encoder.load_weights('HVQVAE/hvqvae_weights/top_encoder.h5')
     return top_encoder
 
+top_encoder=build_top_encoder(image_shape,DT,Tencoder_layers)
 mid_encoder=build_mid_encoder([image_shape[0]//T_reduction,image_shape[1]//T_reduction,DT],image_shape,DM,Mencoder_layers)
 bottom_encoder=build_bot_encoder([image_shape[0]//T_reduction,image_shape[1]//T_reduction,DT],[image_shape[0]//M_reduction,image_shape[1]//M_reduction,DM],image_shape, DB, Bencoder_layers)
 top_quantizer=build_quantizer(T_dim,DT,KT, top_beta,level='top')
