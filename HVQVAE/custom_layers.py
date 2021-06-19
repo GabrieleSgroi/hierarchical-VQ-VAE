@@ -27,11 +27,6 @@ class VectorQuantizer(tf.keras.layers.Layer):
         z_q = tf.reduce_sum(z_q, axis=-2)
         return z_q
     
-    def get_codebook_from_indices(self,indices):
-        indices = tf.one_hot(indices, self.k)
-        z_q = self.lookup_ * k_index_one_hot[..., None]
-        z_q = tf.reduce_sum(z_q, axis=-2)
-        return z_q
 
 class CBAM(tf.keras.layers.Layer):
 
