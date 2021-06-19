@@ -9,6 +9,8 @@ DM=hyper.DM
 KB=hyper.KB               
 DB=hyper.DB
 
+ACT=tf.keras.layers.ELU(alpha=0.1)
+
 
 # Weights for the commitment loss
 top_beta=0.25
