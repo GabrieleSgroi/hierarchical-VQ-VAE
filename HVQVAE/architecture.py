@@ -184,7 +184,7 @@ def build_VQVAE():
 
 def load_top_encoder():
     top_encoder=build_top_encoder(image_shape,DT,Tencoder_layers)
-    top_encoder.load_weights('./hvqvae_weights/top_encoder.h5')
+    top_encoder.load_weights('hierarchical-VQ-VAE/HVQVAE/hvqvae_weights/top_encoder.h5')
     return top_encoder
 
 top_encoder=build_top_encoder(image_shape,DT,Tencoder_layers)
