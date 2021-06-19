@@ -8,6 +8,7 @@ from HVQVAE.custom_layers import VectorQuantizer, CBAM
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Concatenate, BatchNormalization, Lambda
 from tensorflow.keras import Model
 
+current_path = os.path.dirname(os.path.realpath(__file__))
 
 KT=hyper.KT               
 DT=hyper.DT                
