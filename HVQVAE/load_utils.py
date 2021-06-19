@@ -1,5 +1,5 @@
 import tensorflow as tf
-from HVQVAE.architecture import build_top_encoder, build_mid_encoer, build_bot_encoder, build_quantizer, build_decoder, build_VQVAE
+from HVQVAE.architecture import build_top_encoder, build_mid_encoder, build_bot_encoder, build_quantizer, build_decoder, build_VQVAE
 
 def load_top_encoder():
     encoder=build_top_encoder(image_shape,DT,Tencoder_layers)
