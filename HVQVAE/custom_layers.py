@@ -18,7 +18,7 @@ class VectorQuantizer(tf.keras.layers.Layer):
         
     def call(self, inputs):
         # Map z_e of shape (b, w,, h, d) to indices in the codebook
-        lookup_ = tf.reshape(self.codebook, shape=(1, 1, 1, self.k, self.d))
+        self.lookup_ = tf.reshape(self.codebook, shape=(1, 1, 1, self.k, self.d))
         z_e = tf.expand_dims(inputs, -2)
         dist = tf.norm(z_e - lookup_, axis=-1)
         k_index = tf.argmin(dist, axis=-1)
@@ -26,7 +26,12 @@ class VectorQuantizer(tf.keras.layers.Layer):
         z_q = lookup_ * k_index_one_hot[..., None]
         z_q = tf.reduce_sum(z_q, axis=-2)
         return z_q
-
+    
+    def get_codebook_from_indices(self,indices):
+        indices = tf.one_hot(indices, self.k)
+        z_q = self.lookup_ * k_index_one_hot[..., None]
+        z_q = tf.reduce_sum(z_q, axis=-2)
+        return z_q
 
 class CBAM(tf.keras.layers.Layer):
 
