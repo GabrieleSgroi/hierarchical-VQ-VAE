@@ -1,3 +1,6 @@
+"""This module contains the architecture building blocks of the hierarchical VQ-VAE, including
+encoders, quantizers and decoders"""
+
 import tensorflow as tf
 import HVQVAE.hyperparameters as hyper
 from HVQVAE.custom_layers import VectorQuantizer, CBAM
@@ -30,7 +33,6 @@ M_reduction=2**len(Mencoder_layers)
 M_dim=[image_shape[0]//M_reduction, image_shape[1]//M_reduction]
 B_reduction=2**len(Bencoder_layers)
 B_dim=[image_shape[0]//B_reduction, image_shape[1]//B_reduction]
-print("bottom latent dimension", B_dim, "mid latent dimension", M_dim, "top latent dimension", T_dim)
 
 def res_block(inputs, filters, attention_dilation=1, attention_kernel=3):
 
