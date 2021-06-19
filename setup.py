@@ -8,6 +8,7 @@ setup(
     name='Hierarchical VQ-VAE',
     version='0.0.0',
     packages=['HVQVAE'],
+    include_package_data=True,
     install_requires=[
        'numpy',
        'tensorflow',
