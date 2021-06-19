@@ -2,6 +2,7 @@
 encoders, quantizers and decoders"""
 
 import tensorflow as tf
+import os 
 import HVQVAE.hyperparameters as hyper
 from HVQVAE.custom_layers import VectorQuantizer, CBAM
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Concatenate, BatchNormalization, Lambda
@@ -184,7 +185,10 @@ def build_VQVAE():
 
 def load_top_encoder():
     top_encoder=build_top_encoder(image_shape,DT,Tencoder_layers)
-    top_encoder.load_weights("hvqvae_weights/top_encoder.h5")
+    current_path = os.path.dirname(os.path.realpath(__file__))
+    print(current_path)
+    weigths_dir=current_path+"/hvqvae_weights/top_encoder.h5"
+    top_encoder.load_weights(weight_dir)
     return top_encoder
 
 top_encoder=build_top_encoder(image_shape,DT,Tencoder_layers)
