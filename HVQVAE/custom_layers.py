@@ -1,4 +1,4 @@
-class VectorQuantizer(keras.layers.Layer):  
+class VectorQuantizer(tf.keras.layers.Layer):  
 
     """ Implements the Vector Quantizer, the layer returns directly the quantized indices z_q"""
     
@@ -10,7 +10,8 @@ class VectorQuantizer(keras.layers.Layer):
     
     def build(self, input_shape):
         self.d = int(input_shape[-1])
-        rand_init = keras.initializers.VarianceScaling(distribution="uniform")
+        rand_init = tf.
+        .initializers.VarianceScaling(distribution="uniform")
         self.codebook = self.add_weight(name='w',shape=(self.k, self.d), initializer=rand_init, trainable=True)
         
     def call(self, inputs):
@@ -25,7 +26,7 @@ class VectorQuantizer(keras.layers.Layer):
         return z_q
 
 
-class CBAM(keras.layers.Layer):
+class CBAM(tf.keras.layers.Layer):
 
     """Implements Covolutional Bloack Attention Module as arXiv:1807.06521"""
 
@@ -64,7 +65,7 @@ class CBAM(keras.layers.Layer):
         
         return spatial_conditioned
        
-class GateActivation(keras.layers.Layer):
+class GateActivation(tf.keras.layers.Layer):
 
     """Implements gated activation for PixelCNN"""
     
@@ -74,7 +75,7 @@ class GateActivation(keras.layers.Layer):
         x, y = tf.split(inputs, 2, axis=-1)
         return tf.math.tanh(x) * tf.math.sigmoid(y)
         
-class Causal_Average(keras.layers.Layer):
+class Causal_Average(tf.keras.layers.Layer):
 
     """Given a 2D input returns a 2D tensor with the same shape in which each entry is 
     the causal average of the previous entries, i.e. it is the sum of all the entries on the top and left 
@@ -104,7 +105,7 @@ class Causal_Average(keras.layers.Layer):
         return average
         
         
-class CausalAttentionModule(keras.layers.Layer):
+class CausalAttentionModule(tf.keras.layers.Layer):
 
     """Implement a causal version of the CBAM module"""
     
@@ -139,7 +140,7 @@ class CausalAttentionModule(keras.layers.Layer):
         spatial_conditioned=tf.math.multiply(channel_conditioned, spatial_attention )       
         return spatial_conditioned
 
-class MaskedConv2D(layers.Layer):
+class MaskedConv2D(tf.keras.layers.Layer):
 
     """Masked convolutional layer"""
     
