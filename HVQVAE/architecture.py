@@ -129,7 +129,6 @@ def build_quantizer(input_shape,d, k, beta=0.25, level='quantizer'):
     return quantizer
     
 
-#The decoder takes as inputs both the entry in the codebook and the compressed image   
 def build_decoder(T_shape,M_shape, B_shape, layers=[32,32]):
     Top_inputs=tf.keras.Input(shape=T_shape, name='decoder_top_inputs')
     Middle_inputs=tf.keras.Input(shape=M_shape, name='decoder_mid_inputs')
@@ -192,3 +191,20 @@ bottom_quantizer=build_quantizer(B_dim,DB,KB, bot_beta, level='bot')
 bottom_decoder=build_decoder([T_dim[0],T_dim[1],DT],[M_dim[0],M_dim[1],DM],[B_dim[0],B_dim[1],DB], Bdecoder_layers)
  
 vqvae=build_VQVAE()
+
+def get_codebook(quantizer):
+    
+    """Given a quantizer returns the learned codebook"""
+    
+    codebook=quantizer.get_weights()[0]
+    return codebook
+
+def codebook_from_index(codebook, k_index):
+    
+    """"Transform indices into the corresponding codebook entries"""
+    
+    lookup_ = tf.reshape(codebook, shape=(1, 1, 1,KT, DT))
+    k_index_one_hot = tf.one_hot(k_index,KT)
+    z_q = lookup_ * k_index_one_hot[..., None]
+    z_q = tf.reduce_sum(z_q, axis=-2)
+    return z_q
