@@ -170,7 +170,7 @@ def build_decoder(T_shape,M_shape, B_shape, layers=[32,32]):
     return decoder
  
  
-def build_VQVAE():    
+def build_VQVAE(top_encoder, top_quantizer, mid_encoder, mid_quantizer, bottom_encoder, bottom_quantizer,decoder):    
     input_shape=image_shape
     vqvae_input=tf.keras.Input(input_shape, name='Input')
     top_encoded=top_encoder(vqvae_input)
@@ -179,40 +179,8 @@ def build_VQVAE():
     mid_quantized=mid_quantizer(mid_encoded)
     bottom_encoded=bottom_encoder([top_quantized, mid_quantized, vqvae_input])
     bottom_quantized=bottom_quantizer(bottom_encoded)
-    bottom_decoded=bottom_decoder([top_quantized, mid_quantized, bottom_quantized])
+    bottom_decoded=decoder([top_quantized, mid_quantized, bottom_quantized])
     vqvae=Model(inputs=vqvae_input, outputs=bottom_decoded, name='VQVAE')
     return vqvae
 
-def load_top_encoder():
-    top_encoder=build_top_encoder(image_shape,DT,Tencoder_layers)
-    weights_dir=current_path+"/hvqvae_weights/top_encoder.h5"
-    top_encoder.load_weights(weights_dir)    
-    print("Top encoder loaded")
-    return top_encoder
 
-top_encoder=build_top_encoder(image_shape,DT,Tencoder_layers)
-mid_encoder=build_mid_encoder([image_shape[0]//T_reduction,image_shape[1]//T_reduction,DT],image_shape,DM,Mencoder_layers)
-bottom_encoder=build_bot_encoder([image_shape[0]//T_reduction,image_shape[1]//T_reduction,DT],[image_shape[0]//M_reduction,image_shape[1]//M_reduction,DM],image_shape, DB, Bencoder_layers)
-top_quantizer=build_quantizer(T_dim,DT,KT, top_beta,level='top')
-mid_quantizer=build_quantizer(M_dim,DM,KM, mid_beta,level='mid')    
-bottom_quantizer=build_quantizer(B_dim,DB,KB, bot_beta, level='bot')
-bottom_decoder=build_decoder([T_dim[0],T_dim[1],DT],[M_dim[0],M_dim[1],DM],[B_dim[0],B_dim[1],DB], Bdecoder_layers)
- 
-vqvae=build_VQVAE()
-
-def get_codebook(quantizer):
-    
-    """Given a quantizer returns the learned codebook"""
-    
-    codebook=quantizer.get_weights()[0]
-    return codebook
-
-def codebook_from_index(codebook, k_index):
-    
-    """"Transform indices into the corresponding codebook entries"""
-    
-    lookup_ = tf.reshape(codebook, shape=(1, 1, 1,KT, DT))
-    k_index_one_hot = tf.one_hot(k_index,KT)
-    z_q = lookup_ * k_index_one_hot[..., None]
-    z_q = tf.reduce_sum(z_q, axis=-2)
-    return z_q
