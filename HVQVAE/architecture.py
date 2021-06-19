@@ -188,7 +188,7 @@ def load_top_encoder():
     current_path = os.path.dirname(os.path.realpath(__file__))
     print(current_path)
     weigths_dir=current_path+"/hvqvae_weights/top_encoder.h5"
-    top_encoder.load_weights(weight_dir)
+    top_encoder.load_weights(weights_dir)
     return top_encoder
 
 top_encoder=build_top_encoder(image_shape,DT,Tencoder_layers)
