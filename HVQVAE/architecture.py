@@ -47,7 +47,7 @@ def res_block(inputs, filters, attention_dilation=1, attention_kernel=3):
     return out
     
 def build_top_encoder(input_shape, d=DT, layers=Tencoder_layers):
-    encoder_inputs = Input(shape=input_shape, name='encoder_inputs')
+    encoder_inputs = tf.keras.Input(shape=input_shape, name='encoder_inputs')
     x=encoder_inputs
     for i, filters in enumerate(layers):
         x = Conv2D(filters=filters, kernel_size=3, padding='SAME', activation=ACT, 
@@ -62,8 +62,8 @@ def build_top_encoder(input_shape, d=DT, layers=Tencoder_layers):
     return encoder
 
 def build_mid_encoder(top_input_shape,mid_input_shape, d=DM, layers=Mencoder_layers):
-    top_inputs = Input(shape=top_input_shape, name='top_encoder_inputs')
-    mid_inputs = Input(shape=mid_input_shape, name='mid_encoder_inputs')
+    top_inputs = tf.keras.Input(shape=top_input_shape, name='top_encoder_inputs')
+    mid_inputs = tf.keras.Input(shape=mid_input_shape, name='mid_encoder_inputs')
     top=top_inputs
     x=mid_inputs
     for i, filters in enumerate(layers):
@@ -82,9 +82,9 @@ def build_mid_encoder(top_input_shape,mid_input_shape, d=DM, layers=Mencoder_lay
     return encoder
 
 def build_bot_encoder(top_input_shape,mid_input_shape,bot_input_shape, d=DB, layers=Bencoder_layers):
-    top_inputs = Input(shape=top_input_shape, name='top_encoder_inputs')
-    mid_inputs = Input(shape=mid_input_shape, name='mid_encoder_inputs')
-    bot_inputs = Input(shape=bot_input_shape, name='bot_encoder_inputs')
+    top_inputs = tf.keras.Input(shape=top_input_shape, name='top_encoder_inputs')
+    mid_inputs = tf.keras.Input(shape=mid_input_shape, name='mid_encoder_inputs')
+    bot_inputs = tf.keras.Input(shape=bot_input_shape, name='bot_encoder_inputs')
     top_to_bot=top_inputs
     for i in range(len(Tencoder_layers)-len(Bencoder_layers)):
        top_to_bot=Conv2DTranspose(filters=64, kernel_size=4, strides=2, padding='same',activation=ACT)(top_to_bot) 
@@ -111,7 +111,7 @@ def build_bot_encoder(top_input_shape,mid_input_shape,bot_input_shape, d=DB, lay
 def build_quantizer(input_shape,d, k, beta=0.25, level='quantizer'):
     dim1=input_shape[0]
     dim2=input_shape[1]
-    quantizer_input=Input([dim1, dim2, d], name='{}_quantizer_inputs'.format(level))
+    quantizer_input=tf.keras.Input([dim1, dim2, d], name='{}_quantizer_inputs'.format(level))
     z_e=quantizer_input
     z_q=VectorQuantizer(k, name="Vector_Quantizer".format(level))(z_e)
     #straight through estimator for gradients
@@ -128,9 +128,9 @@ def build_quantizer(input_shape,d, k, beta=0.25, level='quantizer'):
 
 #The decoder takes as inputs both the entry in the codebook and the compressed image   
 def build_decoder(T_shape,M_shape, B_shape, layers=[32,32]):
-    Top_inputs=Input(shape=T_shape, name='decoder_top_inputs')
-    Middle_inputs=Input(shape=M_shape, name='decoder_mid_inputs')
-    Bottom_inputs=Input(shape=B_shape, name='decoder_bottom_inputs')
+    Top_inputs=tf.keras.Input(shape=T_shape, name='decoder_top_inputs')
+    Middle_inputs=tf.keras.Input(shape=M_shape, name='decoder_mid_inputs')
+    Bottom_inputs=tf.keras.Input(shape=B_shape, name='decoder_bottom_inputs')
     
     top_latent=BatchNormalization()(Top_inputs)
     top_to_mid=res_block(top_latent,filters=256, attention_dilation=5, attention_kernel=5)
@@ -169,7 +169,7 @@ def build_decoder(T_shape,M_shape, B_shape, layers=[32,32]):
  
 def build_VQVAE():    
     input_shape=image_shape
-    vqvae_input=Input(input_shape, name='Input')
+    vqvae_input=tf.keras.Input(input_shape, name='Input')
     Top_encoded=Top_encoder(vqvae_input)
     Top_quantized=Top_quantizer(Top_encoded)
     Mid_encoded=Mid_encoder([Top_quantized,vqvae_input])
