@@ -1,1 +1,1 @@
-import HVQVAE.hvqvae_building_blocks.py
+import HVQVAE.hvqvae_building_blocks
