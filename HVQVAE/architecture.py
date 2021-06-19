@@ -179,3 +179,13 @@ def build_VQVAE():
     Bottom_decoded=Bottom_decoder([Top_quantized, Mid_quantized, Bottom_quantized])
     vqvae=Model(inputs=vqvae_input, outputs=Bottom_decoded, name='VQVAE')
     return vqvae
+
+Top_encoder=build_top_encoder(image_shape,DT,Tencoder_layers)
+Mid_encoder=build_mid_encoder([image_shape[0]//T_reduction,image_shape[1]//T_reduction,DT],image_shape,DM,Mencoder_layers)
+Bottom_encoder=build_bot_encoder([image_shape[0]//T_reduction,image_shape[1]//T_reduction,DT],[image_shape[0]//M_reduction,image_shape[1]//M_reduction,DM],image_shape, DB, Bencoder_layers)
+Top_quantizer=build_quantizer(T_dim,DT,KT, top_beta,level='top')
+Mid_quantizer=build_quantizer(M_dim,DM,KM, mid_beta,level='mid')    
+Bottom_quantizer=build_quantizer(B_dim,DB,KB, bot_beta, level='bot')
+Bottom_decoder=build_decoder([T_dim[0],T_dim[1],DT],[M_dim[0],M_dim[1],DM],[B_dim[0],B_dim[1],DB], Bdecoder_layers)
+ 
+VQVAE=build_VQVAE(image_shape)
