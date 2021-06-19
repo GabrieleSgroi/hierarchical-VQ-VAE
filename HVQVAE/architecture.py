@@ -167,7 +167,8 @@ def build_decoder(T_shape,M_shape, B_shape, layers=[32,32]):
     return decoder
  
  
-def build_VQVAE(input_shape):    
+def build_VQVAE():    
+    input_shape=image_shape
     vqvae_input=Input(input_shape, name='Input')
     Top_encoded=Top_encoder(vqvae_input)
     Top_quantized=Top_quantizer(Top_encoded)
