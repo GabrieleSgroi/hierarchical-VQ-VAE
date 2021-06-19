@@ -4,6 +4,7 @@ encoders, quantizers and decoders"""
 import tensorflow as tf
 import os 
 import HVQVAE.hyperparameters as hyper
+import HVQVAE.hvqvae_weights
 from HVQVAE.custom_layers import VectorQuantizer, CBAM
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Concatenate, BatchNormalization, Lambda
 from tensorflow.keras import Model
