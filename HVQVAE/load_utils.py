@@ -82,7 +82,7 @@ def load_VQVAE():
     bot_encoder=load_bot_encoder()
     bot_quantizer=load_bot_quantizer()
     decoder=load_decoder()
-    vqvae=build_VQVAE(top_encoder, top_quantizer, mid_encoder, mid_quantizer, bottom_encoder, bottom_quantizer,decoder)
+    vqvae=build_VQVAE(top_encoder, top_quantizer, mid_encoder, mid_quantizer, bot_encoder, bot_quantizer,decoder)
     print("Loaded Hierarchical VQVAE")
     return vqvae
 
