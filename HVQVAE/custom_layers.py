@@ -77,14 +77,14 @@ class GateActivation(tf.keras.layers.Layer):
         x, y = tf.split(inputs, 2, axis=-1)
         return tf.math.tanh(x) * tf.math.sigmoid(y)
         
-class Causal_Average(tf.keras.layers.Layer):
+class CausalAverage(tf.keras.layers.Layer):
 
     """Given a 2D input returns a 2D tensor with the same shape in which each entry is 
     the causal average of the previous entries, i.e. it is the sum of all the entries on the top and left 
     divided by the number of such entries"""
     
     def __init__(self, **kwargs):
-        super(Causal_Average, self).__init__()
+        super(CausalAverage, self).__init__()
         
     def build(self, input_shape):   
         self.b=input_shape[0]
@@ -125,7 +125,7 @@ class CausalAttentionModule(tf.keras.layers.Layer):
         self.channel_conv2=tf.keras.layers.Conv2D(filters=self.filter_size, kernel_size=1, activation=self.activation)
         self.bn=tf.keras.layers.BatchNormalization()
         self.bn1=tf.keras.layers.BatchNormalization()
-        self.causal_average=Causal_Average()
+        self.causal_average=CausalAverage()
         
     def call(self, inputs):
         avg=self.causal_average(inputs)
