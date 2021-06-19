@@ -1,4 +1,4 @@
-import tf
+import tensorflow as tf
 from HVQVAE.architecture import build_top_encoder, build_mid_encoer, build_bot_encoder, build_quantizer, build_decoder, build_VQVAE
 
 def load_top_encoder():
