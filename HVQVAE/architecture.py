@@ -191,4 +191,4 @@ mid_quantizer=build_quantizer(M_dim,DM,KM, mid_beta,level='mid')
 bottom_quantizer=build_quantizer(B_dim,DB,KB, bot_beta, level='bot')
 bottom_decoder=build_decoder([T_dim[0],T_dim[1],DT],[M_dim[0],M_dim[1],DM],[B_dim[0],B_dim[1],DB], Bdecoder_layers)
  
-VQVAE=build_VQVAE()
+vqvae=build_VQVAE()
