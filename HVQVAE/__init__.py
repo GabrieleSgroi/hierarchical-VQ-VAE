@@ -1,1 +1,1 @@
-import HVQVAE.hvqvae_building_blocks
+import HVQVAE.hvqvae_arch
