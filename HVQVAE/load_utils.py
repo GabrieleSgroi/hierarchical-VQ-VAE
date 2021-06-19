@@ -1,5 +1,28 @@
 import tensorflow as tf
+import os
 from HVQVAE.architecture import build_top_encoder, build_mid_encoder, build_bot_encoder, build_quantizer, build_decoder, build_VQVAE
+from HVQVAE.hyperparameters import KT,DT,KM,DM, KB,DB
+
+current_path = os.path.dirname(os.path.realpath(__file__))
+
+#Weights for the commitment loss
+top_beta=0.25
+mid_beta=0.25
+bot_beta=0.25             
+
+Tencoder_layers= [128,128,128,128,128]      #Strided layers for the top-level encoder    
+Mencoder_layers=[128,128,128,128]       #Strided layers for the mid-level encoder
+Bencoder_layers=[128,128,128]           #Strided layers for the bottom-level encoder
+Bdecoder_layers=[256,256,256]           #Strided layers for the decoder
+img_size=512
+color_channels=3
+image_shape=[img_size,img_size,color_channels]
+T_reduction=2**len(Tencoder_layers)
+T_dim=[image_shape[0]//T_reduction, image_shape[1]//T_reduction]
+M_reduction=2**len(Mencoder_layers)
+M_dim=[image_shape[0]//M_reduction, image_shape[1]//M_reduction]
+B_reduction=2**len(Bencoder_layers)
+B_dim=[image_shape[0]//B_reduction, image_shape[1]//B_reduction]
 
 def load_top_encoder():
     encoder=build_top_encoder(image_shape,DT,Tencoder_layers)
