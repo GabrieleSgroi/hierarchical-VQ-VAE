@@ -9,6 +9,7 @@ from tensorflow.keras import Model, Input
 ACT=tf.keras.layers.ELU(alpha=0.1) #Activation function
 PIXELCNN_NUM_BLOCKS = 20  # Number of Gated PixelCNN blocks in the architecture
 PIXELCNN_NUM_FEATURE_MAPS = 256
+latent_shape=[16,16]
 
 top_quantizer=load_top_quantizer()
 top_codebook=get_codebook(top_quantizer)
