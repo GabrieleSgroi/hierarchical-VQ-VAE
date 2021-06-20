@@ -13,8 +13,6 @@ def shift_pass(v_stack):
 def gated_block(v_stack_in, h_stack_in, out_dim, kernel, mask='b', residual=True, i=0,dilation=1):
     """Implementation of the basic gated pixelcnn block following sect. 2 of TEXT- AND STRUCTURE-CONDITIONAL PIXELCNN,
     S. Reed, A. van den Oord, N. Kalchbrenner, V. Bapst, M. Botvinick, N. de Freitas Google DeepMind"""
-    kernel_shape = (kernel, 1)
-    padding = (kernel // 2, kernel // 2)
 
     if residual:
         v_attention=CausalAttentionModule(out_dim, mask,dilation=2)(v_stack_in)
@@ -25,20 +23,19 @@ def gated_block(v_stack_in, h_stack_in, out_dim, kernel, mask='b', residual=True
 
     Extraconv=Conv2D(kernel_size=1, filters=out_dim*2,activation=ACT)(v_stack_in)
     v_stack=Conv2D(kernel_size=(1,kernel), filters=out_dim,activation=ACT, dilation_rate=dilation, padding="same")(v_stack_in)
-    v_stack = MaskedConv2D(mask, filters=out_dim*2, kernel_size=kernel_shape,padding="same", dilation_rate=dilation, activation=ACT, name="v_masked_conv_{}".format(i))(v_stack)
+    v_stack = MaskedConv2D(mask, filters=out_dim*2, kernel_size=(kernel, 1),padding="same", dilation_rate=dilation, activation=ACT, name="v_masked_conv_{}".format(i))(v_stack)
     vBN=BatchNormalization()(v_stack+Extraconv)
     v_stack_out = GateActivation()(vBN)
 
 
-    h_stack = MaskedConv2D(mask,filters=out_dim * 2, kernel_size=kernel_shape,activation=ACT,padding="same",dilation_rate=dilation, name="h_masked_conv_{}".format(i))(h_stack_in)
+    h_stack = MaskedConv2D(mask,filters=out_dim * 2, kernel_size=(1,kernel),activation=ACT,padding="same",dilation_rate=dilation, name="h_masked_conv_{}".format(i))(h_stack_in)
     shift=shift_pass(v_stack)
     h_stack_1 =Conv2D(filters=out_dim * 2, kernel_size=1, activation=ACT, name="v_to_h_{}".format(i))(shift)
     hBN=BatchNormalization()(h_stack + h_stack_1)
     h_stack_out=GateActivation()(hBN)
     
     skip=Conv2D(filters=out_dim, kernel_size=1, strides=(1, 1), activation=ACT)(h_stack_out)
-    skip=Dropout(0.2)(skip)
-    
+
     h_stack_out = Conv2D(filters=out_dim, kernel_size=1, strides=(1, 1), activation=ACT, name="res_conv_{}".format(i))(h_stack_out)
     h_stack_out=Dropout(0.2)(h_stack_out)
     
@@ -54,7 +51,7 @@ def build_pixelcnn(num_layers, num_feature_maps=64):
     v_stack_in, h_stack_in = z_q, z_q
     for i in range(0,num_layers):
         mask = 'b' if i > 0 else 'a'
-        kernel_size = 5 if i > 0 else 7
+        kernel_size = 3 if i > 0 else 7
         residual = True if i > 0 else False
         
         if i % 5==1 or i %5==3:
@@ -68,10 +65,9 @@ def build_pixelcnn(num_layers, num_feature_maps=64):
             skip=skipped
         else:
             skip+=skipped
+            
+    skip=BatchNormalization()(skip)
     fc = Conv2D(filters=num_feature_maps, kernel_size=1,padding='same', activation=ACT)(skip)
-    fc=Dropout(0.2)(fc)
-    attention=CausalAttentionModule(num_feature_maps,mask_type='b',dilation=2)(fc)
-    fc = Conv2D(filters=num_feature_maps, kernel_size=1,padding='same', activation=ACT)(fc+attention)
     fc=Dropout(0.2)(fc)
     attention=CausalAttentionModule(num_feature_maps,mask_type='b')(fc)
     fc = Conv2D(filters=num_feature_maps, kernel_size=1,padding='same', activation=ACT)(fc+attention)
@@ -90,3 +86,4 @@ def build_pixelcnn(num_layers, num_feature_maps=64):
 
 
 pixelcnn_prior = build_pixelcnn(PIXELCNN_NUM_BLOCKS, PIXELCNN_NUM_FEATURE_MAPS)
+
