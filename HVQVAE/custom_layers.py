@@ -149,7 +149,7 @@ class MaskedConv2D(tf.keras.layers.Layer):
     def __init__(self, mask_type, **kwargs):
         super(MaskedConv2D, self).__init__()
         self.mask_type = mask_type
-        self.conv = layers.Conv2D(**kwargs)
+        self.conv = tf.keras.layers.Conv2D(**kwargs)
 
     def build(self, input_shape):
         # Build the conv2d layer to initialize kernel variables
