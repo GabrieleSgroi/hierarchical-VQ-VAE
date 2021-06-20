@@ -30,9 +30,9 @@ def build_indicization_model():
     top_quantizer=loader.load_top_quantizer()
     mid_quantizer=loader.load_mid_quantizer()
     bot_quantizer=loader.load_bot_quantizer()
-    top_codebook=loader.get_codebook(top_quantizer)
-    mid_codebook=loader.get_codebook(mid_quantizer)
-    bot_codebook=loader.get_codebook(bot_quantizer)
+    top_codebook=get_codebook(top_quantizer)
+    mid_codebook=get_codebook(mid_quantizer)
+    bot_codebook=get_codebook(bot_quantizer)
     
     inp=tf.keras.Input(shape=[img_size,img_size, 3])
     
