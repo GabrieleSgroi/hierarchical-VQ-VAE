@@ -50,7 +50,7 @@ def build_indicization_model():
     mid_dist = tf.norm(z_m - mid_lookup_, axis=-1)
     mid_index = tf.argmin(mid_dist, axis=-1)
     
-    bot_encoded=bottom_encoder([top_quantized, mid_quantized,inp])
+    bot_encoded=bot_encoder([top_quantized, mid_quantized,inp])
     bot_lookup_ = tf.reshape(bot_codebook, shape=(1,1,1,KB,DB))
     z_b = tf.expand_dims(bot_encoded, -2)
     bot_dist = tf.norm(z_b - bot_lookup_, axis=-1)
