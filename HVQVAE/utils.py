@@ -19,7 +19,7 @@ def codebook_from_index(codebook, k_index):
     z_q = tf.reduce_sum(z_q, axis=-2)
     return z_q
   
-def indicization_model():
+def build_indicization_model():
   
     """Load models and wrap them into a single keras model that, givena a batch of images, outputs a tuple
     of their top, mid and bot indices """
@@ -59,3 +59,12 @@ def indicization_model():
     model=tf.keras.Model(inputs=inp, outputs=[top_index,mid_index, bot_index])
 
     return model
+
+def encode_images_indices(images):
+    
+    """Given a batch of images, returns their indices"""
+    
+    indicizer=build_indicization_model()
+    top_indices, mid_indices, bot_indices=indicizer.predict(images)
+    
+    return top_indices, mid_indices, bot_indices
