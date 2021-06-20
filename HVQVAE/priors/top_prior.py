@@ -4,6 +4,10 @@ from HVQVAE.custom_layers import VectorQuantizer, CBAM, GateActivation,  CausalA
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Concatenate, BatchNormalization, Lambda
 from tensorflow.keras import Model
 
+ACT=tf.keras.layers.ELU(alpha=0.1) #Activation function
+PIXELCNN_NUM_BLOCKS = 20  # Number of Gated PixelCNN blocks in the architecture
+PIXELCNN_NUM_FEATURE_MAPS = 256
+
 def shift_pass(v_stack):
     #shift to apply to the vertical pass so that the horizontal stack remains causal
     shift=ZeroPadding2D(padding=((1,0),(0,0)))(v_stack)
