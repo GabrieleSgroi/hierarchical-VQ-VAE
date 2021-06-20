@@ -5,7 +5,7 @@ import tensorflow as tf
 from HVQVAE.custom_layers import VectorQuantizer, CBAM
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Concatenate, BatchNormalization, Lambda
 from tensorflow.keras import Model
-from HVQVAE.hyperparameters import KT,DT,KM,DM, KB,DB
+from HVQVAE.hyperparameters import KT,DT,KM,DM, KB,DB, img_size, color_channels
 
 #Weights for the commitment loss
 top_beta=0.25
@@ -16,8 +16,6 @@ Tencoder_layers= [128,128,128,128,128]      #Strided layers for the top-level en
 Mencoder_layers=[128,128,128,128]       #Strided layers for the mid-level encoder
 Bencoder_layers=[128,128,128]           #Strided layers for the bottom-level encoder
 Bdecoder_layers=[256,256,256]           #Strided layers for the decoder
-img_size=512
-color_channels=3
 image_shape=[img_size,img_size,color_channels]
 T_reduction=2**len(Tencoder_layers)
 T_dim=[image_shape[0]//T_reduction, image_shape[1]//T_reduction]
