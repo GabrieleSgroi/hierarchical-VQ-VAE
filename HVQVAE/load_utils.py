@@ -86,19 +86,3 @@ def load_VQVAE():
     print("Loaded Hierarchical VQVAE")
     return vqvae
 
-def get_codebook(quantizer):
-    
-    """Given a quantizer returns the learned codebook"""
-    
-    codebook=quantizer.get_weights()[0]
-    return codebook
-
-def codebook_from_index(codebook, k_index):
-    
-    """"Transform indices into the corresponding codebook entries"""
-    
-    lookup_ = tf.reshape(codebook, shape=(1, 1, 1,KT, DT))
-    k_index_one_hot = tf.one_hot(k_index,KT)
-    z_q = lookup_ * k_index_one_hot[..., None]
-    z_q = tf.reduce_sum(z_q, axis=-2)
-    return z_q
