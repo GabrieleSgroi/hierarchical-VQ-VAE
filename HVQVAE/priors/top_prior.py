@@ -1,12 +1,18 @@
 import tensorflow as tf
 from HVQVAE.hyperparameters import KT,DT
 from HVQVAE.custom_layers import VectorQuantizer, CBAM, GateActivation,  CausalAttentionModule
-from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Concatenate, BatchNormalization, Lambda
+from HVQVAE.utils import get_codebook, codebook_from_index
+from HVQVAE.load_utils import load_top_quantizer
+from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Concatenate, BatchNormalization, Lambda,ZeroPadding2D,Cropping2D
 from tensorflow.keras import Model
 
 ACT=tf.keras.layers.ELU(alpha=0.1) #Activation function
 PIXELCNN_NUM_BLOCKS = 20  # Number of Gated PixelCNN blocks in the architecture
 PIXELCNN_NUM_FEATURE_MAPS = 256
+
+top_quantizer=load_top_quantizer()
+top_codebook=get_codebook(top_quantizer)
+
 
 def shift_pass(v_stack):
     #shift to apply to the vertical pass so that the horizontal stack remains causal
@@ -51,7 +57,7 @@ def gated_block(v_stack_in, h_stack_in, out_dim, kernel, mask='b', residual=True
 
 def build_top_prior(num_layers=PIXELCNN_NUM_BLOCKS, num_feature_maps=PIXELCNN_NUM_FEATURE_MAPS):
     pixelcnn_prior_inputs = Input(shape=(latent_shape[0],latent_shape[1]), name='pixelcnn_prior_inputs', dtype=tf.int64)
-    z_q =codebook_from_index(pixelcnn_prior_inputs) # maps indices to the actual codebook
+    z_q =codebook_from_index(top_codebook, pixelcnn_prior_inputs) # maps indices to the actual codebook
     v_stack_in, h_stack_in = z_q, z_q
     for i in range(0,num_layers):
         mask = 'b' if i > 0 else 'a'
