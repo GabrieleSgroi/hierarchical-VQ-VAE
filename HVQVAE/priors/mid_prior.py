@@ -64,9 +64,9 @@ def gated_block(v_stack_in, h_stack_in, out_dim, conditional, kernel,dilation=1,
 def build_mid_prior(num_layers=20, num_feature_maps=128):
    pixelcnn_prior_inputs = Input(shape=(mid_latent_shape[0], mid_latent_shape[1]), name='pixelcnn_prior_inputs', dtype=tf.int64)
    Top_input=Input(shape=(top_latent_shape[0], top_latent_shape[1]), name='conditional_input', dtype=tf.int64)
-   cq=top_codebook_from_index(Top_input)
+   cq=top_codebook
    cq=Conv2DTranspose(kernel_size=2, filters=num_feature_maps*2, strides=2, padding='same', activation=ACT)(cq)
-   z_q =mid_codebook_from_index(pixelcnn_prior_inputs)
+   z_q =mid_codebook
    v_stack_in, h_stack_in = z_q, z_q
    for i in range(0,num_layers):
         if i%5==2:
