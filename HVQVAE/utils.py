@@ -12,9 +12,10 @@ def get_codebook(quantizer):
 def codebook_from_index(codebook, k_index):
     
     """"Transform indices into the corresponding codebook entries"""
-    
-    lookup_ = tf.reshape(codebook, shape=(1, 1, 1,KT, DT))
-    k_index_one_hot = tf.one_hot(k_index,KT)
+    K=codebook.shape[0]
+    D=codebook.shape[1]
+    lookup_ = tf.reshape(codebook, shape=(1, 1, 1,K, D))
+    k_index_one_hot = tf.one_hot(k_index,K)
     z_q = lookup_ * k_index_one_hot[..., None]
     z_q = tf.reduce_sum(z_q, axis=-2)
     return z_q
