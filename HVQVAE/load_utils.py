@@ -29,6 +29,7 @@ B_dim=[image_shape[0]//B_reduction, image_shape[1]//B_reduction]
 def load_top_encoder():
     encoder=build_top_encoder(image_shape,DT,Tencoder_layers)
     weights_dir=current_path+"/hvqvae_weights/top_encoder.h5"
+    print(weights_dir)
     encoder.load_weights(weights_dir)    
     print("Top encoder loaded")
     return encoder
