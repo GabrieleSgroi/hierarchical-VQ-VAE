@@ -1,5 +1,5 @@
 import tensorflow as tf
-from HVQVAE.hyperparameters import KT,DT
+from HVQVAE.hyperparameters import KT,DT, KM, DM
 from HVQVAE.custom_layers import VectorQuantizer, CBAM, GateActivation,  CausalAttentionModule, MaskedConv2D
 from HVQVAE.utils import get_codebook, codebook_from_index
 from HVQVAE.load_utils import load_mid_quantizer, load_top_quantizer
