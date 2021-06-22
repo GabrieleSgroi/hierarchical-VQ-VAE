@@ -62,7 +62,7 @@ def gated_block(v_stack_in, h_stack_in, out_dim, conditional, kernel,dilation=1,
     return v_stack_out, h_stack_out,skip
 
 
-def build_pixelcnn(num_layers, num_feature_maps=64):
+def build_mid_prior(num_layers, num_feature_maps=64):
    pixelcnn_prior_inputs = Input(shape=(mid_latent_shape[0], mid_latent_shape[1]), name='pixelcnn_prior_inputs', dtype=tf.int64)
    Top_input=Input(shape=(top_latent_shape[0], top_latent_shape[1]), name='conditional_input', dtype=tf.int64)
    cq=top_codebook_from_index(Top_input)
