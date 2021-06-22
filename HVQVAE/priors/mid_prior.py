@@ -2,8 +2,8 @@ import tensorflow as tf
 from HVQVAE.hyperparameters import KT,DT, KM, DM
 from HVQVAE.custom_layers import VectorQuantizer, CBAM, GateActivation,  CausalAttentionModule, MaskedConv2D
 from HVQVAE.utils import get_codebook, codebook_from_index
-import HVQVAE.load_utils.load_mid_quantizer as load_mid_quantizer
-import HVQVAE.load_utils.load_top_quantizer as  load_top_quantizer
+from HVQVAE.load_utils import load_top_quantizer, load_mid_quantizer
+
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Concatenate, BatchNormalization, Lambda,ZeroPadding2D,Cropping2D, Dropout
 from tensorflow.keras import Model, Input
 import os
