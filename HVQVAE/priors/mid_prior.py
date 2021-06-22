@@ -6,6 +6,7 @@ import HVQVAE.load_utils.load_mid_quantizer as load_mid_quantizer
 import HVQVAE.load_utils.load_top_quantizer as  load_top_quantizer
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Concatenate, BatchNormalization, Lambda,ZeroPadding2D,Cropping2D, Dropout
 from tensorflow.keras import Model, Input
+import os
 
 num_blocks =20       # Number of Gated PixelCNN blocks in the architecture
 
@@ -107,6 +108,7 @@ def build_mid_prior(num_layers=20, num_feature_maps=128):
    return pixelcnn_prior
 
 def load_mid_prior():
+    current_path = os.path.dirname(os.path.realpath(__file__))
     mid_prior=build_mid_prior()
     weights_dir=current_path+"priors/priors_weights/mid_prior_weights.h5"
     mid_prior.load_weights(weights_dir)
