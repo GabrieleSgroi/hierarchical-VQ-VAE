@@ -5,6 +5,7 @@ from HVQVAE.utils import get_codebook, codebook_from_index
 from HVQVAE.load_utils import load_top_quantizer 
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Concatenate, BatchNormalization, Lambda,ZeroPadding2D,Cropping2D, Dropout
 from tensorflow.keras import Model, Input
+import os
 
 ACT=tf.keras.layers.ELU(alpha=0.1) #Activation function
 PIXELCNN_NUM_BLOCKS = 20  # Number of Gated PixelCNN blocks in the architecture
@@ -97,10 +98,10 @@ def build_top_prior(num_layers=PIXELCNN_NUM_BLOCKS, num_feature_maps=PIXELCNN_NU
 
 
 
-#def load_top_prior():
-#    current_path = os.path.dirname(os.path.realpath(__file__))
-#    top_prior=build_top_prior()
-#    weights_dir=current_path+"priors_weights/top_prior_weights.h5"
-#    top_prior.load_weights(weights_dir)
-#    print("Top prior loaded")
-#    return top_prior
+def load_top_prior():
+    current_path = os.path.dirname(os.path.realpath(__file__))
+    top_prior=build_top_prior()
+    weights_dir=current_path+"priors_weights/top_prior_weights.h5"
+    top_prior.load_weights(weights_dir)
+    print("Top prior loaded")
+    return top_prior
