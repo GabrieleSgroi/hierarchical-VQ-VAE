@@ -97,3 +97,9 @@ def build_top_prior(num_layers=PIXELCNN_NUM_BLOCKS, num_feature_maps=PIXELCNN_NU
 
 
 
+def load_top_prior():
+    top_prior=build_top_prior()
+    weights_dir=current_path+"priors_weights/top_prior_weights.h5"
+    top_prior.load_weights(weights_dir)
+    print("Top prior loaded")
+    return top_prior
