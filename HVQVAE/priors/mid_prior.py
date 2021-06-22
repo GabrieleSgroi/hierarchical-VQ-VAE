@@ -105,3 +105,10 @@ def build_mid_prior(num_layers=20, num_feature_maps=128):
    pixelcnn_prior = Model(inputs=[top_input,pixelcnn_prior_inputs], outputs=fc2, name='pixelcnn-prior')
  
    return pixelcnn_prior
+
+def load_mid_prior():
+    mid_prior=build_mid_prior()
+    weights_dir=current_path+"priors/priors_weights/mid_prior_weights.h5"
+    mid_prior.load_weights(weights_dir)
+    print("Mid prior loaded")
+    return mid_prior
