@@ -64,8 +64,8 @@ def gated_block(v_stack_in, h_stack_in, out_dim, conditional, kernel,dilation=1,
 
 def build_mid_prior(num_layers=20, num_feature_maps=128):
    pixelcnn_prior_inputs = Input(shape=(mid_latent_shape[0], mid_latent_shape[1]), name='pixelcnn_prior_inputs', dtype=tf.int64)
-   Top_input=Input(shape=(top_latent_shape[0], top_latent_shape[1]), name='conditional_input', dtype=tf.int64)
-   cq=codebook_from_index(top_codebook, pixelcnn_prior_inputs) # maps indices to the actual codebook entries
+   top_input=Input(shape=(top_latent_shape[0], top_latent_shape[1]), name='conditional_input', dtype=tf.int64)
+   cq=codebook_from_index(top_codebook, top_input) # maps indices to the actual codebook entries
    cq=Conv2DTranspose(kernel_size=2, filters=num_feature_maps*2, strides=2, padding='same', activation=ACT)(cq)
    z_q =codebook_from_index(mid_codebook, pixelcnn_prior_inputs) # maps indices to the actual codebook entries
    v_stack_in, h_stack_in = z_q, z_q
@@ -101,6 +101,6 @@ def build_mid_prior(num_layers=20, num_feature_maps=128):
    fc=Dropout(0.2)(fc)
    fc2 = Conv2D(filters=KM, kernel_size=1, name="fc2")(fc) 
 
-   pixelcnn_prior = Model(inputs=[Top_input,pixelcnn_prior_inputs], outputs=fc2, name='pixelcnn-prior')
+   pixelcnn_prior = Model(inputs=[top_input,pixelcnn_prior_inputs], outputs=fc2, name='pixelcnn-prior')
  
    return pixelcnn_prior
