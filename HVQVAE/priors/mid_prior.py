@@ -6,8 +6,7 @@ from HVQVAE.load_utils import load_mid_quantizer, load_top_quantizer
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Concatenate, BatchNormalization, Lambda,ZeroPadding2D,Cropping2D, Dropout
 from tensorflow.keras import Model, Input
 
-PIXELCNN_NUM_BLOCKS =20       # Number of Gated PixelCNN blocks in the architecture
-PIXELCNN_NUM_FEATURE_MAPS=128
+num_blocks =20       # Number of Gated PixelCNN blocks in the architecture
 
 r=1 #Top to bottom halvings (i.e. d_bot=2^r d_top)
 mid_latent_shape=[32,32]
@@ -62,7 +61,7 @@ def gated_block(v_stack_in, h_stack_in, out_dim, conditional, kernel,dilation=1,
     return v_stack_out, h_stack_out,skip
 
 
-def build_mid_prior(num_layers, num_feature_maps=64):
+def build_mid_prior(num_layers=20, num_feature_maps=128):
    pixelcnn_prior_inputs = Input(shape=(mid_latent_shape[0], mid_latent_shape[1]), name='pixelcnn_prior_inputs', dtype=tf.int64)
    Top_input=Input(shape=(top_latent_shape[0], top_latent_shape[1]), name='conditional_input', dtype=tf.int64)
    cq=top_codebook_from_index(Top_input)
