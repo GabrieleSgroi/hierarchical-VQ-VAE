@@ -11,9 +11,10 @@ num_blocks =20       # Number of Gated PixelCNN blocks in the architecture
 r=1 #Top to bottom halvings (i.e. d_bot=2^r d_top)
 mid_latent_shape=[32,32]
 top_latent_shape=[16,16]
+ACT=tf.keras.layers.ELU(alpha=0.1)
 
 top_quantizer=load_top_quantizer()
-top_codebook=get_codebook(top_quantizer)
+top_codebook=get_codebook(top_quantizer) 
 
 mid_quantizer=load_mid_quantizer()
 mid_codebook=get_codebook(mid_quantizer)
@@ -64,9 +65,9 @@ def gated_block(v_stack_in, h_stack_in, out_dim, conditional, kernel,dilation=1,
 def build_mid_prior(num_layers=20, num_feature_maps=128):
    pixelcnn_prior_inputs = Input(shape=(mid_latent_shape[0], mid_latent_shape[1]), name='pixelcnn_prior_inputs', dtype=tf.int64)
    Top_input=Input(shape=(top_latent_shape[0], top_latent_shape[1]), name='conditional_input', dtype=tf.int64)
-   cq=top_codebook
+   cq=codebook_from_index(top_codebook, pixelcnn_prior_inputs) # maps indices to the actual codebook entries
    cq=Conv2DTranspose(kernel_size=2, filters=num_feature_maps*2, strides=2, padding='same', activation=ACT)(cq)
-   z_q =mid_codebook
+   z_q =codebook_from_index(mid_codebook, pixelcnn_prior_inputs) # maps indices to the actual codebook entries
    v_stack_in, h_stack_in = z_q, z_q
    for i in range(0,num_layers):
         if i%5==2:
