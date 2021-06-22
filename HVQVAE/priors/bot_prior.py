@@ -6,7 +6,7 @@ from HVQVAE.load_utils import load_bot_quantizer, load_mid_quantizer, load_top_q
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Concatenate, BatchNormalization, Lambda,ZeroPadding2D,Cropping2D, Dropout
 from tensorflow.keras import Model, Input
 
-bot_latent_shape=[32,32]
+bot_latent_shape=[64,64]
 mid_latent_shape=[32,32]
 top_latent_shape=[16,16]
 ACT=tf.keras.layers.ELU(alpha=0.1)
