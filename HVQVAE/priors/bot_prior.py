@@ -21,6 +21,12 @@ mid_codebook=get_codebook(mid_quantizer)
 bot_quantizer=load_bot_quantizer()
 bot_codebook=get_codebook(bot_quantizer)
 
+def shift_pass(v_stack):
+    #shift to apply to the vertical pass so that the horizontal stack remains causal
+    shift=ZeroPadding2D(padding=((1,0),(0,0)))(v_stack)
+    shift=Cropping2D(cropping=((0,1),(0,0)))(shift)
+    return shift
+
 def gated_block(v_stack_in, h_stack_in, conditional, out_dim, kernel, mask='b',dilation=1, residual=True, i=0):
     """Basic Gated-PixelCNN block"""
    
