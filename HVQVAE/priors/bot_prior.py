@@ -5,6 +5,7 @@ from HVQVAE.utils import get_codebook, codebook_from_index
 from HVQVAE.load_utils import load_bot_quantizer, load_mid_quantizer, load_top_quantizer
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Concatenate, BatchNormalization, Lambda,ZeroPadding2D,Cropping2D, Dropout
 from tensorflow.keras import Model, Input
+import os
 
 bot_latent_shape=[64,64]
 mid_latent_shape=[32,32]
@@ -100,3 +101,11 @@ def build_bot_prior(num_layers=20, num_feature_maps=64):
     pixelcnn_prior = Model(inputs=[top_input, mid_input, pixelcnn_prior_inputs], outputs=fc, name='pixelcnn-prior')
  
     return pixelcnn_prior
+
+def load_bot_prior():
+    current_path = os.path.dirname(os.path.realpath(__file__))
+    top_prior=build_bot_prior()
+    weights_dir=current_path+"priors/priors_weights/bot_prior_weights.h5"
+    bot_prior.load_weights(weights_dir)
+    print("Bot prior loaded")
+    return bot_prior

@@ -1,6 +1,8 @@
 import tensorflow as tf
 import os
 from HVQVAE.architecture import build_top_encoder, build_mid_encoder, build_bot_encoder, build_quantizer, build_decoder, build_VQVAE
+
+
 from HVQVAE.hyperparameters import KT,DT,KM,DM, KB,DB
 
 current_path = os.path.dirname(os.path.realpath(__file__))
@@ -85,4 +87,10 @@ def load_VQVAE():
     vqvae=build_VQVAE(top_encoder, top_quantizer, mid_encoder, mid_quantizer, bot_encoder, bot_quantizer,decoder)
     print("Loaded Hierarchical VQVAE")
     return vqvae
+
+
+
+
+
+
 

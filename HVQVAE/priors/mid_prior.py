@@ -2,9 +2,11 @@ import tensorflow as tf
 from HVQVAE.hyperparameters import KT,DT, KM, DM
 from HVQVAE.custom_layers import VectorQuantizer, CBAM, GateActivation,  CausalAttentionModule, MaskedConv2D
 from HVQVAE.utils import get_codebook, codebook_from_index
-from HVQVAE.load_utils import load_mid_quantizer, load_top_quantizer
+import HVQVAE.load_utils.load_mid_quantizer as load_mid_quantizer
+import HVQVAE.load_utils.load_top_quantizer as  load_top_quantizer
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Concatenate, BatchNormalization, Lambda,ZeroPadding2D,Cropping2D, Dropout
 from tensorflow.keras import Model, Input
+import os
 
 num_blocks =20       # Number of Gated PixelCNN blocks in the architecture
 
@@ -104,3 +106,11 @@ def build_mid_prior(num_layers=20, num_feature_maps=128):
    pixelcnn_prior = Model(inputs=[top_input,pixelcnn_prior_inputs], outputs=fc2, name='pixelcnn-prior')
  
    return pixelcnn_prior
+
+def load_mid_prior():
+    current_path = os.path.dirname(os.path.realpath(__file__))
+    mid_prior=build_mid_prior()
+    weights_dir=current_path+"priors/priors_weights/mid_prior_weights.h5"
+    mid_prior.load_weights(weights_dir)
+    print("Mid prior loaded")
+    return mid_prior
