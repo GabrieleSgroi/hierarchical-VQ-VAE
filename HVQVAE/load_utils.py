@@ -1,9 +1,6 @@
 import tensorflow as tf
 import os
 from HVQVAE.architecture import build_top_encoder, build_mid_encoder, build_bot_encoder, build_quantizer, build_decoder, build_VQVAE
-from HVQVAE.priors.top_prior import build_top_prior
-from HVQVAE.priors.mid_prior import build_mid_prior
-from HVQVAE.priors.bot_prior import build_bot_prior
 
 
 from HVQVAE.hyperparameters import KT,DT,KM,DM, KB,DB
@@ -91,24 +88,9 @@ def load_VQVAE():
     print("Loaded Hierarchical VQVAE")
     return vqvae
 
-def load_top_prior():
-    top_prior=build_top_prior()
-    weights_dir=current_path+"priors/priors_weights/top_prior_weights.h5"
-    top_prior.load_weights(weights_dir)
-    print("Top prior loaded")
-    return top_prior
 
-def load_mid_prior():
-    mid_prior=build_mid_prior()
-    weights_dir=current_path+"priors/priors_weights/mid_prior_weights.h5"
-    mid_prior.load_weights(weights_dir)
-    print("Mid prior loaded")
-    return mid_prior
 
-def load_bot_prior():
-    top_prior=build_bot_prior()
-    weights_dir=current_path+"priors/priors_weights/bot_prior_weights.h5"
-    bot_prior.load_weights(weights_dir)
-    print("Bot prior loaded")
-    return bot_prior
+
+
+
 
