@@ -5,8 +5,6 @@ from HVQVAE.architecture import build_top_encoder, build_mid_encoder, build_bot_
 
 from HVQVAE.hyperparameters import KT,DT,KM,DM, KB,DB
 
-current_path = os.path.dirname(os.path.realpath(__file__))
-
 #Weights for the commitment loss
 top_beta=0.25
 mid_beta=0.25
@@ -28,8 +26,8 @@ B_dim=[image_shape[0]//B_reduction, image_shape[1]//B_reduction]
 
 def load_top_encoder():
     encoder=build_top_encoder(image_shape,DT,Tencoder_layers)
-    weights_dir=current_path+"/hvqvae_weights/top_encoder.h5"
-    print(weights_dir)
+    url='https://github.com/GabrieleSgroi/hierarchical-VQ-VAE/blob/main/HVQVAE/hvqvae_weights/top_encoder.h5?raw=true'
+    weights_dir=tf.keras.utils.get_file('top_encoder_weights',url)
     encoder.load_weights(weights_dir)    
     print("Top encoder loaded")
     return encoder
