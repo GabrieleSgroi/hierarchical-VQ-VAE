@@ -100,7 +100,7 @@ def build_top_prior(num_layers=PIXELCNN_NUM_BLOCKS, num_feature_maps=PIXELCNN_NU
 
 def load_top_prior():
     top_prior=build_top_prior()
-    url='https://github.com/GabrieleSgroi/hierarchical-VQ-VAE/blob/main/HVQVAE/priors/priors_weights/mid_prior_weights.h5?raw=true'
+    url='https://github.com/GabrieleSgroi/hierarchical-VQ-VAE/blob/main/HVQVAE/priors/priors_weights/top_prior_weights.h5?raw=true'
     weights_dir=tf.keras.utils.get_file('top_prior_weights.h5',url)
     top_prior.load_weights(weights_dir) 
     print('Top prior loaded')
