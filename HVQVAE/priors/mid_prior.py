@@ -112,4 +112,5 @@ def load_mid_prior():
     url='https://github.com/GabrieleSgroi/hierarchical-VQ-VAE/blob/main/HVQVAE/priors/priors_weights/mid_prior_weights.h5?raw=true'
     weights_dir=tf.keras.utils.get_file('top_encoder_weights',url)
     mid_prior.load_weights(weights_dir) 
+    print('Mid prior loaded')
     return mid_prior
