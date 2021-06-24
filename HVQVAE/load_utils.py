@@ -26,7 +26,7 @@ B_dim=[image_shape[0]//B_reduction, image_shape[1]//B_reduction]
 
 def load_top_encoder():
     encoder=build_top_encoder(image_shape,DT,Tencoder_layers)
-    url='https://drive.google.com/file/d/1fywWt2hrAds50llq-zvm75N4rJATKNR7/view?usp=sharing'
+    url='https://drive.google.com/file/d/1qjr7Lx1iENxWuaiNxCGsJILqyqyqHh-d/view?usp=sharing'
     weights_dir=tf.keras.utils.get_file('top_encoder_weights',url)
     encoder.load_weights(weights_dir)    
     print("Top encoder loaded")
@@ -34,28 +34,28 @@ def load_top_encoder():
 
 def load_mid_encoder():
     encoder=build_mid_encoder([image_shape[0]//T_reduction,image_shape[1]//T_reduction,DT],image_shape,DM,Mencoder_layers)
-    url='https://drive.google.com/file/d/1BSmNX73WuMCPnOQxiGgQ-vAST6--WvaL/view?usp=sharing'
+    url='https://drive.google.com/file/d/1LVGGmeIXkIHr22h4eQWrHg_RYTDCMyPP/view?usp=sharing'
     weights_dir=tf.keras.utils.get_file('mid_encoder_weights',url)    
     print("Mid encoder loaded")
     return encoder
 
 def load_bot_encoder():
     encoder=build_bot_encoder([image_shape[0]//T_reduction,image_shape[1]//T_reduction,DT],[image_shape[0]//M_reduction,image_shape[1]//M_reduction,DM],image_shape, DB, Bencoder_layers)
-    url='https://drive.google.com/file/d/18R-QwB6olO5-HnPeb54i2qO4f7K3LJ6Y/view?usp=sharing'
+    url='https://drive.google.com/file/d/1D8OS2n7r6En9orHIyaUGKbV9vy_uFMjX/view?usp=sharing'
     weights_dir=tf.keras.utils.get_file('bot_encoder_weights',url)  
     print("Bot encoder loaded")
     return encoder
 
 def load_top_quantizer():
     quantizer=build_quantizer(T_dim,DT,KT, top_beta,level='top')
-    url='https://drive.google.com/file/d/1hTqrLE3OZ68Y1g3oJVc7GScJ-BcqnupF/view?usp=sharing'
+    url='https://drive.google.com/file/d/14MbZysi4IPf4XJT38rSJcYVILAgoU_NO/view?usp=sharing'
     weights_dir=tf.keras.utils.get_file('top_quantizer_weights',url)
     print("Top quantizer Loaded")
     return quantizer
 
 def load_mid_quantizer():
     quantizer=build_quantizer(M_dim,DM,KM, mid_beta,level='mid')    
-    url='https://drive.google.com/file/d/1w-itnd3bMpIJPa7tWbyK77E_3TeNltCy/view?usp=sharing'
+    url='https://drive.google.com/file/d/1ww32GDB2hHEK51o5c1ydrWrOfnRcp8Ap/view?usp=sharing'
     weights_dir=tf.keras.utils.get_file('mid_quantizer_weights',url)
     print("Mid quantizer Loaded")
     return quantizer
@@ -63,14 +63,14 @@ def load_mid_quantizer():
 
 def load_bot_quantizer():
     quantizer=build_quantizer(B_dim,DB,KB, bot_beta, level='bot')
-    url='https://drive.google.com/file/d/1oj2ExlBD6s9YDGFNox8fMpCNxe4jhL9H/view?usp=sharing'
+    url='https://drive.google.com/file/d/1VDHGxu_Ke9r9RIvW9EtMKr4XjXLNPhGK/view?usp=sharing'
     weights_dir=tf.keras.utils.get_file('bot_quantizer_weights',url)
     print("Bot quantizer Loaded")
     return quantizer
 
 def load_decoder():
     decoder=build_decoder([T_dim[0],T_dim[1],DT],[M_dim[0],M_dim[1],DM],[B_dim[0],B_dim[1],DB], Bdecoder_layers)
-    url='https://drive.google.com/file/d/176V7YwoNA3CdmYq-j3wj_XUBfq2ttE1R/view?usp=sharing'
+    url='https://drive.google.com/file/d/1d7iRP0Bd3oqjFBH6sml8sPyUpQMiwXMm/view?usp=sharing'
     weights_dir=tf.keras.utils.get_file('decoder_weights',url)
     print("Decoder loaded")
     return decoder
