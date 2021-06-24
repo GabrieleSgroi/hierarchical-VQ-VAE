@@ -26,7 +26,7 @@ B_dim=[image_shape[0]//B_reduction, image_shape[1]//B_reduction]
 
 def load_top_encoder():
     encoder=build_top_encoder(image_shape,DT,Tencoder_layers)
-    url='https://github.com/GabrieleSgroi/hierarchical-VQ-VAE/blob/main/HVQVAE/hvqvae_weights/top_encoder.h5?raw=true'
+    url='https://drive.google.com/file/d/1JCnRL4KbKXsRc3zfcVMnMh0m8tj5hVYm/view?usp=sharing'
     weights_dir=tf.keras.utils.get_file('top_encoder_weights',url)
     encoder.load_weights(weights_dir)    
     print("Top encoder loaded")
