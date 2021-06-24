@@ -68,7 +68,7 @@ def load_bot_quantizer():
 
 def load_decoder():
     decoder=build_decoder([T_dim[0],T_dim[1],DT],[M_dim[0],M_dim[1],DM],[B_dim[0],B_dim[1],DB], Bdecoder_layers)
-    url='https://drive.google.com/file/d/13qzBvfyHQMygG_GgdStDQ_yW7iXujuxq/view?usp=sharing'
+    url='https://github.com/GabrieleSgroi/hierarchical-VQ-VAE/blob/main/HVQVAE/hvqvae_weights/bottom_quantizer.h5?raw=true'
     weights_dir=tf.keras.utils.get_file('decoder_weights',url)
     print("Decoder loaded")
     return decoder
