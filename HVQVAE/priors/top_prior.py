@@ -101,7 +101,8 @@ def build_top_prior(num_layers=PIXELCNN_NUM_BLOCKS, num_feature_maps=PIXELCNN_NU
 def load_top_prior():
     current_path = os.path.dirname(os.path.realpath(__file__))
     top_prior=build_top_prior()
-    weights_dir=current_path+"priors_weights/top_prior_weights.h5"
+    url='https://drive.google.com/file/d/1wkbE3J5WwbDR4VB2q8hxY3xyL_8CihhB/view?usp=sharing'
+    weights_dir=tf.keras.utils.get_file('decoder_weights',url)
     top_prior.load_weights(weights_dir)
     print("Top prior loaded")
     return top_prior
