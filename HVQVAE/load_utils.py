@@ -41,7 +41,7 @@ def load_mid_encoder():
 
 def load_bot_encoder():
     encoder=build_bot_encoder([image_shape[0]//T_reduction,image_shape[1]//T_reduction,DT],[image_shape[0]//M_reduction,image_shape[1]//M_reduction,DM],image_shape, DB, Bencoder_layers)
-    url='https://drive.google.com/file/d/1twqpBKLx_b8rKm2WbWc7fuZ4yHsFxxvp/view?usp=sharing'
+    url='https://drive.google.com/file/d/1JCnRL4KbKXsRc3zfcVMnMh0m8tj5hVYm/view?usp=sharing'
     weights_dir=tf.keras.utils.get_file('bot_encoder_weights',url)  
     print("Bot encoder loaded")
     return encoder
