@@ -41,7 +41,7 @@ def load_mid_encoder():
 
 def load_bot_encoder():
     encoder=build_bot_encoder([image_shape[0]//T_reduction,image_shape[1]//T_reduction,DT],[image_shape[0]//M_reduction,image_shape[1]//M_reduction,DM],image_shape, DB, Bencoder_layers)
-    url='https://github.com/GabrieleSgroi/hierarchical-VQ-VAE/blob/main/HVQVAE/hvqvae_weights/bottom_encoder.h5?raw=true'
+    url='https://drive.google.com/file/d/18R-QwB6olO5-HnPeb54i2qO4f7K3LJ6Y/view?usp=sharing'
     weights_dir=tf.keras.utils.get_file('bot_encoder_weights',url)  
     print("Bot encoder loaded")
     return encoder
