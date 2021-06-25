@@ -7,6 +7,7 @@ def get_codebook(quantizer):
     """Given a quantizer returns the learned codebook"""
     
     codebook=quantizer.get_weights()[0]
+    
     return codebook
 
 def codebook_from_index(codebook, k_index):
