@@ -13,7 +13,8 @@ setup(
        'numpy',
        'tensorflow',
        'matplotlib',
-       'tensorflow-probability'
+       'tensorflow-probability',
+       'progressbar2'
        
     ]
 )
