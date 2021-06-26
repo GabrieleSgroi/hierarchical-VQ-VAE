@@ -102,10 +102,3 @@ def build_bot_prior(num_layers=20, num_feature_maps=64):
  
     return pixelcnn_prior
 
-def load_bot_prior():
-    bot_prior=build_bot_prior()
-    url='https://github.com/GabrieleSgroi/hierarchical-VQ-VAE/blob/main/HVQVAE/priors/priors_weights/bot_prior_weights.h5?raw=true'
-    weights_dir=tf.keras.utils.get_file('bot_prior_weights.h5',url)
-    bot_prior.load_weights(weights_dir) 
-    print('Bot prior loaded')
-    return bot_prior
