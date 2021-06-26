@@ -107,10 +107,4 @@ def build_mid_prior(num_layers=20, num_feature_maps=128):
  
    return pixelcnn_prior
 
-def load_mid_prior():
-    mid_prior=build_mid_prior()
-    url='https://github.com/GabrieleSgroi/hierarchical-VQ-VAE/blob/main/HVQVAE/priors/priors_weights/mid_prior_weights.h5?raw=true'
-    weights_dir=tf.keras.utils.get_file('mid_prior_weights.h5',url)
-    mid_prior.load_weights(weights_dir) 
-    print('Mid prior loaded')
-    return mid_prior
+
