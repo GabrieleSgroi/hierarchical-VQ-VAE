@@ -5,7 +5,6 @@ from HVQVAE.utils import get_codebook, codebook_from_index
 from HVQVAE.load_utils import load_top_quantizer 
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Concatenate, BatchNormalization, Lambda,ZeroPadding2D,Cropping2D, Dropout
 from tensorflow.keras import Model, Input
-import 
 
 ACT=tf.keras.layers.ELU(alpha=0.1) #Activation function
 PIXELCNN_NUM_BLOCKS = 20  # Number of Gated PixelCNN blocks in the architecture
