@@ -1,6 +1,3 @@
-from HVQVAE.priors.mid_prior import load_mid_prior
-from HVQVAE.priors.top_prior import load_top_prior
-from HVQVAE.priors.bot_prior import load_bot_prior
 from HVQVAE.load_utils import load_decoder, load_top_quantizer, load_mid_quantizer, load_bot_quantizer
 from HVQVAE.utils import get_codebook, codebook_from_index
 import numpy as np
