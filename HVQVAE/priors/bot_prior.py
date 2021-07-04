@@ -60,10 +60,10 @@ def gated_block(v_stack_in, h_stack_in, conditional, out_dim, kernel, mask='b',d
 def build_bot_prior(num_layers=20, num_feature_maps=64):
     pixelcnn_prior_inputs = Input(shape=(bot_latent_shape[0], bot_latent_shape[1]), name='pixelcnn_prior_inputs', dtype=tf.int64)
     Top_input=Input(shape=(top_latent_shape[0], top_latent_shape[1]), name='conditional_top_input', dtype=tf.int64)
-    ct_q=top_codebook_from_index(top_codebook, Top_input)
+    ct_q=codebook_from_index(top_codebook, Top_input)
     Mid_input=Input(shape=(mid_latent_shape[0],mid_latent_shape[1]), name='conditional_mid_input', dtype=tf.int64)
-    cm_q=mid_codebook_from_index(mid_codebook, Mid_input)
-    z_q =bot_codebook_from_index(bot_codebook, pixelcnn_prior_inputs) # maps indices to the actual codebook
+    cm_q=codebook_from_index(mid_codebook, Mid_input)
+    z_q =codebook_from_index(bot_codebook, pixelcnn_prior_inputs) # maps indices to the actual codebook
     
     ct_q=Conv2D(filters=num_feature_maps, kernel_size=3, activation=ACT, padding="same")(ct_q)
     attention=CBAM(num_feature_maps, activation=ACT, dilation=2, kernel_size=5)(ct_q)
