@@ -35,12 +35,12 @@ class CBAM(tf.keras.layers.Layer):
     def __init__(self, filter_size, activation=tf.keras.activations.relu, dilation=1, kernel_size=3, bottleneck_reduction=4, renorm=False):
         super(CBAM, self).__init__()
         self.reduction=bottleneck_reduction
+        self.renorm=renorm
         self.filter_size=filter_size
         self.activation=activation
         self.MLP = self.build_MLP()
         self.conv=tf.keras.layers.Conv2D(filters=filter_size, kernel_size=kernel_size,padding='same',
                                          dilation_rate=dilation, activation='sigmoid')
-        self.renorm=renorm
 
     def build_MLP(self):
         inputs=tf.keras.layers.Input(shape=self.filter_size)
