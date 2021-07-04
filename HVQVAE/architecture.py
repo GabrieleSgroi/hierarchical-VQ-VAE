@@ -145,7 +145,6 @@ def build_decoder(T_shape,M_shape, B_shape, layers=[32,32]):
            bot_upsample=BatchNormalization()(bot_upsample)
 
     
-    #y=Concatenate(axis=-1)([bot_upsample, mid_upsample, top_upsample])
     y=tf.keras.layers.Add()([bot_upsample, mid_upsample, top_upsample])
     y=Conv2D(filters=256, kernel_size=1, activation=ACT)(y)
     y=Conv2D(filters=256, kernel_size=1, activation=ACT)(y)
