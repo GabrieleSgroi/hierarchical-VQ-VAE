@@ -66,11 +66,11 @@ def build_bot_prior(num_layers=15, num_feature_maps=64):
     z_q =codebook_from_index(bot_codebook, pixelcnn_prior_inputs) # maps indices to the actual codebook
     
     ct_q=Conv2D(filters=num_feature_maps, kernel_size=3, activation=ACT, padding="same")(ct_q)
-    attention=CBAM(num_feature_maps, activation=ACT, dilation=2, kernel_size=5)(ct_q)
+    attention=CBAM(num_feature_maps, activation=ACT, dilation=2, kernel_size=5, renorm=True)(ct_q)
     ct_q=Conv2DTranspose(kernel_size=4, filters=num_feature_maps, strides=2, padding='same', activation=ACT)(ct_q+attention)
     conditional=Concatenate(axis=-1)([ct_q, cm_q])
     conditional=Conv2D(filters=num_feature_maps, kernel_size=3, activation=ACT, padding="same")(conditional)
-    attention=CBAM(num_feature_maps, activation=ACT, dilation=2, kernel_size=5)(conditional)
+    attention=CBAM(num_feature_maps, activation=ACT, dilation=2, kernel_size=5, renorm=True)(conditional)
     conditional=Conv2DTranspose(kernel_size=4, filters=2*num_feature_maps, strides=2, padding='same', activation=ACT)(conditional+attention)
     conditional=BatchNormalization(renorm=True)(conditional)
 
