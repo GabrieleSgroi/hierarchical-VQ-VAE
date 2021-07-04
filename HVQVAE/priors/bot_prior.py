@@ -56,16 +56,23 @@ def gated_block(v_stack_in, h_stack_in, conditional, out_dim, kernel, mask='b',d
     return v_stack_out, h_stack_out,skip
 
 
+
 def build_bot_prior(num_layers=20, num_feature_maps=64):
     pixelcnn_prior_inputs = Input(shape=(bot_latent_shape[0], bot_latent_shape[1]), name='pixelcnn_prior_inputs', dtype=tf.int64)
-    top_input=Input(shape=(top_latent_shape[0], top_latent_shape[1]), name='conditional_top_input', dtype=tf.int64) #top-level input indices
-    ct_q=codebook_from_index(top_codebook, top_input) # maps indices to the actual codebook entries
-    mid_input=Input(shape=(mid_latent_shape[0],mid_latent_shape[1]), name='conditional_mid_input', dtype=tf.int64) #mid-evel input indices
-    cm_q=codebook_from_index(mid_codebook, mid_input) # maps indices to the actual codebook entries
-    z_q =codebook_from_index(bot_codebook, pixelcnn_prior_inputs) # maps indices to the actual codebook entries
-    ct_q=Conv2DTranspose(kernel_size=2, filters=num_feature_maps, strides=2, padding='same', activation=ACT)(ct_q)
+    Top_input=Input(shape=(top_latent_shape[0], top_latent_shape[1]), name='conditional_top_input', dtype=tf.int64)
+    ct_q=top_codebook_from_index(Top_input)
+    Mid_input=Input(shape=(mid_latent_shape[0],mid_latent_shape[1]), name='conditional_mid_input', dtype=tf.int64)
+    cm_q=mid_codebook_from_index(Mid_input)
+    z_q =bot_codebook_from_index(pixelcnn_prior_inputs) # maps indices to the actual codebook
+    
+    ct_q=Conv2D(filters=num_feature_maps, kernel_size=3, activation=ACT, padding="same")(ct_q)
+    attention=CBAM(num_feature_maps, activation=ACT, dilation=2, kernel_size=5)(ct_q)
+    ct_q=Conv2DTranspose(kernel_size=4, filters=num_feature_maps, strides=2, padding='same', activation=ACT)(ct_q+attention)
     conditional=Concatenate(axis=-1)([ct_q, cm_q])
-    conditional=Conv2DTranspose(kernel_size=2, filters=2*num_feature_maps, strides=2, padding='same', activation=ACT)(conditional)
+    conditional=Conv2D(filters=num_feature_maps, kernel_size=3, activation=ACT, padding="same")(conditional)
+    attention=CBAM(num_feature_maps, activation=ACT, dilation=2, kernel_size=5)(conditional)
+    conditional=Conv2DTranspose(kernel_size=4, filters=2*num_feature_maps, strides=2, padding='same', activation=ACT)(conditional+attention)
+    conditional=BatchNormalization(renorm=True)(conditional)
 
     v_stack_in, h_stack_in = z_q, z_q
     for i in range(0,num_layers):
@@ -98,7 +105,6 @@ def build_bot_prior(num_layers=20, num_feature_maps=64):
     fc = Conv2D(filters=KB, kernel_size=1)(fc)  
     # outputs logits for probabilities of codebook indices for each cell
     
-    pixelcnn_prior = Model(inputs=[top_input, mid_input, pixelcnn_prior_inputs], outputs=fc, name='pixelcnn-prior')
+    pixelcnn_prior = Model(inputs=[Top_input, Mid_input, pixelcnn_prior_inputs], outputs=fc, name='pixelcnn-prior')
  
     return pixelcnn_prior
-
