@@ -25,7 +25,7 @@ def gated_block(v_stack_in, h_stack_in, out_dim, kernel, mask='b', residual=True
     """Implementation of the basic gated pixelcnn block following sect. 2 of TEXT- AND STRUCTURE-CONDITIONAL PIXELCNN,
     S. Reed, A. van den Oord, N. Kalchbrenner, V. Bapst, M. Botvinick, N. de Freitas Google DeepMind"""
 
-    if residual:
+    if residual: 
         v_attention=CausalAttentionModule(out_dim, mask,dilation=2)(v_stack_in)
         v_stack_in=v_stack_in+v_attention
         h_attention=CausalAttentionModule(out_dim, mask,dilation=2)(h_stack_in)
@@ -45,10 +45,9 @@ def gated_block(v_stack_in, h_stack_in, out_dim, kernel, mask='b', residual=True
     hBN=BatchNormalization()(h_stack + h_stack_1)
     h_stack_out=GateActivation()(hBN)
     
-    skip=Conv2D(filters=out_dim, kernel_size=1, strides=(1, 1), activation=ACT)(h_stack_out)
+    skip=Conv2D(filters=out_dim, kernel_size=1, activation=ACT)(h_stack_out)
 
-    h_stack_out = Conv2D(filters=out_dim, kernel_size=1, strides=(1, 1), activation=ACT, name="res_conv_{}".format(i))(h_stack_out)
-    h_stack_out=Dropout(0.2)(h_stack_out)
+    h_stack_out = Conv2D(filters=out_dim, kernel_size=1, activation=ACT, name="res_conv_{}".format(i))(h_stack_out)
     
     if residual:
         h_stack_out += h_stack_in
@@ -56,9 +55,10 @@ def gated_block(v_stack_in, h_stack_in, out_dim, kernel, mask='b', residual=True
     return v_stack_out, h_stack_out,skip
 
 
+
 def build_top_prior(num_layers=PIXELCNN_NUM_BLOCKS, num_feature_maps=PIXELCNN_NUM_FEATURE_MAPS):
-    pixelcnn_prior_inputs = Input(shape=(latent_shape[0],latent_shape[1]), name='pixelcnn_prior_inputs', dtype=tf.int64)
-    z_q =codebook_from_index(top_codebook, pixelcnn_prior_inputs) # maps indices to the actual codebook
+     pixelcnn_prior_inputs = Input(shape=(latent_shape[0],latent_shape[1]), name='pixelcnn_prior_inputs', dtype=tf.int64)
+    z_q =codebook_from_index(pixelcnn_prior_inputs) # maps indices to the actual codebook
     v_stack_in, h_stack_in = z_q, z_q
     for i in range(0,num_layers):
         mask = 'b' if i > 0 else 'a'
@@ -79,21 +79,16 @@ def build_top_prior(num_layers=PIXELCNN_NUM_BLOCKS, num_feature_maps=PIXELCNN_NU
             
     skip=BatchNormalization()(skip)
     fc = Conv2D(filters=num_feature_maps, kernel_size=1,padding='same', activation=ACT)(skip)
-    fc=Dropout(0.2)(fc)
     attention=CausalAttentionModule(num_feature_maps,mask_type='b')(fc)
     fc = Conv2D(filters=num_feature_maps, kernel_size=1,padding='same', activation=ACT)(fc+attention)
-    fc=Dropout(0.2)(fc)
     attention=CausalAttentionModule(num_feature_maps,mask_type='b')(fc)
     fc = Conv2D(filters=2*num_feature_maps, kernel_size=1,padding='same', activation=ACT)(fc+skip+attention)
     fc=BatchNormalization()(fc)
-    fc=Dropout(0.2)(fc)
     fc = Conv2D(filters=KT, kernel_size=1, name="fc2")(fc) 
     # outputs logits for probabilities of codebook indices for each cell
     
     pixelcnn_prior = Model(inputs=pixelcnn_prior_inputs, outputs=fc, name='pixelcnn-prior')
     # Distribution to sample from the pixelcnn
-    
-    return pixelcnn_prior
 
 
 
