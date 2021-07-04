@@ -57,7 +57,7 @@ def gated_block(v_stack_in, h_stack_in, conditional, out_dim, kernel, mask='b',d
 
 
 
-def build_bot_prior(num_layers=20, num_feature_maps=64):
+def build_bot_prior(num_layers=15, num_feature_maps=64):
     pixelcnn_prior_inputs = Input(shape=(bot_latent_shape[0], bot_latent_shape[1]), name='pixelcnn_prior_inputs', dtype=tf.int64)
     Top_input=Input(shape=(top_latent_shape[0], top_latent_shape[1]), name='conditional_top_input', dtype=tf.int64)
     ct_q=codebook_from_index(top_codebook, Top_input)
