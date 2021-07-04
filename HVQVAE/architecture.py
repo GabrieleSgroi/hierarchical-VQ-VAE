@@ -38,23 +38,21 @@ def res_block(inputs, filters, attention_dilation=1, attention_kernel=3):
     return out
     
 def build_top_encoder(input_shape, d=DT, layers=Tencoder_layers):
-    encoder_inputs = tf.keras.Input(shape=input_shape, name='encoder_inputs')
+    encoder_inputs = Input(shape=input_shape, name='encoder_inputs')
     x=encoder_inputs
     for i, filters in enumerate(layers):
         x = Conv2D(filters=filters, kernel_size=3, padding='SAME', activation=ACT, 
                             strides=2, name="EncoderConv{}".format(i + 1))(x)
         x=res_block(x,filters=filters, attention_dilation=3, attention_kernel=5)
 
-    x=res_block(x,filters=256, attention_dilation=2, attention_kernel=5)
- 
     z_e = Conv2D(filters=d, kernel_size=1, padding='SAME', strides=(1, 1), name='z_e')(x)
     
     encoder=Model(inputs=encoder_inputs, outputs=z_e, name='Top_encoder')
     return encoder
 
 def build_mid_encoder(top_input_shape,mid_input_shape, d=DM, layers=Mencoder_layers):
-    top_inputs = tf.keras.Input(shape=top_input_shape, name='top_encoder_inputs')
-    mid_inputs = tf.keras.Input(shape=mid_input_shape, name='mid_encoder_inputs')
+    top_inputs = Input(shape=top_input_shape, name='top_encoder_inputs')
+    mid_inputs = Input(shape=mid_input_shape, name='mid_encoder_inputs')
     top=top_inputs
     x=mid_inputs
     for i, filters in enumerate(layers):
@@ -63,25 +61,27 @@ def build_mid_encoder(top_input_shape,mid_input_shape, d=DM, layers=Mencoder_lay
           x=res_block(x,filters, attention_dilation=5, attention_kernel=5)
 
     for i in range(len(Tencoder_layers)-len(Mencoder_layers)):
-        top=Conv2DTranspose(filters=128, kernel_size=4, strides=2, padding='same')(top) #last change filters 16_>DM, take out if it takes too much time
-    
+        top=Conv2DTranspose(filters=DM, kernel_size=4, strides=2, padding='same')(top)
+        
     x=Concatenate(axis=-1)([top, x])
-    x=res_block(x,256, attention_dilation=5, attention_kernel=5)
+    x=BatchNormalization()(x)
+    x=res_block(x,256, attention_dilation=3, attention_kernel=5)
+    x=res_block(x,256, attention_dilation=3, attention_kernel=5)
     z_e = Conv2D(filters=d, kernel_size=1, padding='same', name='z_e')(x)
     
     encoder=Model(inputs=[top_inputs, mid_inputs], outputs=z_e, name='Mid_encoder')
     return encoder
 
 def build_bot_encoder(top_input_shape,mid_input_shape,bot_input_shape, d=DB, layers=Bencoder_layers):
-    top_inputs = tf.keras.Input(shape=top_input_shape, name='top_encoder_inputs')
-    mid_inputs = tf.keras.Input(shape=mid_input_shape, name='mid_encoder_inputs')
-    bot_inputs = tf.keras.Input(shape=bot_input_shape, name='bot_encoder_inputs')
+    top_inputs = Input(shape=top_input_shape, name='top_encoder_inputs')
+    mid_inputs = Input(shape=mid_input_shape, name='mid_encoder_inputs')
+    bot_inputs = Input(shape=bot_input_shape, name='bot_encoder_inputs')
     top_to_bot=top_inputs
     for i in range(len(Tencoder_layers)-len(Bencoder_layers)):
-       top_to_bot=Conv2DTranspose(filters=64, kernel_size=4, strides=2, padding='same',activation=ACT)(top_to_bot) 
+       top_to_bot=Conv2DTranspose(filters=DB, kernel_size=4, strides=2, padding='same',activation=ACT)(top_to_bot) 
     mid_to_bot=mid_inputs
     for i in range(len(Mencoder_layers)-len(Bencoder_layers)):
-       mid_to_bot=Conv2DTranspose(filters=64, kernel_size=4, strides=2, padding='same',activation=ACT)(mid_to_bot) 
+       mid_to_bot=Conv2DTranspose(filters=DB, kernel_size=4, strides=2, padding='same',activation=ACT)(mid_to_bot) 
 
     x=bot_inputs
     for i, filters in enumerate(layers):
@@ -94,7 +94,8 @@ def build_bot_encoder(top_input_shape,mid_input_shape,bot_input_shape, d=DB, lay
     x=BatchNormalization()(x)
     x=res_block(x,256, attention_dilation=5, attention_kernel=5)
     x=res_block(x,256, attention_dilation=5, attention_kernel=5)
-    z_e = Conv2D(filters=d, kernel_size=1, padding='SAME', strides=(1, 1), name='z_e')(x)
+    x=res_block(x,256, attention_dilation=5, attention_kernel=5)
+    z_e = Conv2D(filters=d, kernel_size=1, padding='SAME',  name='Bot_encoder')(x)
     
     encoder=Model(inputs=[top_inputs, mid_inputs,bot_inputs], outputs=z_e, name='Bot_encoder')
     return encoder
@@ -102,7 +103,7 @@ def build_bot_encoder(top_input_shape,mid_input_shape,bot_input_shape, d=DB, lay
 def build_quantizer(input_shape,d, k, beta=0.25, level='quantizer'):
     dim1=input_shape[0]
     dim2=input_shape[1]
-    quantizer_input=tf.keras.Input([dim1, dim2, d], name='{}_quantizer_inputs'.format(level))
+    quantizer_input=Input([dim1, dim2, d], name='{}_quantizer_inputs'.format(level))
     z_e=quantizer_input
     z_q=VectorQuantizer(k, name="Vector_Quantizer".format(level))(z_e)
     #straight through estimator for gradients
@@ -117,44 +118,43 @@ def build_quantizer(input_shape,d, k, beta=0.25, level='quantizer'):
     return quantizer
     
 
+#The decoder takes as inputs both the entry in the codebook and the compressed image   
 def build_decoder(T_shape,M_shape, B_shape, layers=[32,32]):
-    Top_inputs=tf.keras.Input(shape=T_shape, name='decoder_top_inputs')
-    Middle_inputs=tf.keras.Input(shape=M_shape, name='decoder_mid_inputs')
-    Bottom_inputs=tf.keras.Input(shape=B_shape, name='decoder_bottom_inputs')
+    top_inputs=Input(shape=T_shape, name='decoder_top_inputs')
+    middle_inputs=Input(shape=M_shape, name='decoder_mid_inputs')
+    bottom_inputs=Input(shape=B_shape, name='decoder_bottom_inputs')
     
-    top_latent=BatchNormalization()(Top_inputs)
-    top_to_mid=res_block(top_latent,filters=256, attention_dilation=5, attention_kernel=5)
-    for i in range(len(Tencoder_layers)-len(Mencoder_layers)):
-           top_to_mid=Conv2DTranspose(filters=DM, kernel_size=4, padding="SAME", activation=ACT,strides=2)(top_to_mid)
-
-    top_to_bot=top_to_mid
-    for i in range(len(Tencoder_layers)-len(Mencoder_layers)):
-           top_to_bot=Conv2DTranspose(filters=DM, kernel_size=4, padding="SAME", activation=ACT,strides=2)(top_to_bot)
-
-    mid_latent=Concatenate(axis=-1)([top_to_mid, Middle_inputs])
-    mid_latent=BatchNormalization()(mid_latent)
-    #mid_latent=res_block(mid_latent,filters=256, attention_dilation=5, attention_kernel=5)
-    mid_to_bot=res_block(mid_latent,filters=256, attention_dilation=5, attention_kernel=5)
-    for i in range(len(Mencoder_layers)-len(Bencoder_layers)):
-            mid_to_bot=Conv2DTranspose(filters=DB, kernel_size=4, padding="SAME", 
-                                       activation=ACT,strides=(2,2))(mid_to_bot)
+    top_upsample=Conv2D(filters=256, kernel_size=1,padding="SAME", activation=ACT)(top_inputs)
     
+    for i in range(len(Tencoder_layers)):
+           top_upsample=Conv2DTranspose(filters=128, kernel_size=4, padding="SAME", activation=ACT,strides=2)(top_upsample)
+           top_upsample=BatchNormalization()(top_upsample)
+        
+    mid_upsample=Conv2D(filters=128, kernel_size=1,padding="SAME", activation=ACT)(middle_inputs)
+     
+    for i in range(len(Mencoder_layers)):
+           mid_upsample=Conv2DTranspose(filters=128, kernel_size=4, padding="SAME", activation=ACT,strides=2)(mid_upsample)
+           mid_upsample=BatchNormalization()(mid_upsample)
 
-    bot_latent=Concatenate(axis=-1)([Bottom_inputs, mid_to_bot,top_to_bot])
-    bot_latent=BatchNormalization()(bot_latent)
-    bot_latent=res_block(bot_latent,filters=256, attention_dilation=5, attention_kernel=5)
-    bot_latent=res_block(bot_latent,filters=256, attention_dilation=5, attention_kernel=5)
-    #bot_latent=res_block(bot_latent,filters=256, attention_dilation=5, attention_kernel=5)
 
+    bot_upsample=Conv2D(filters=128, kernel_size=1,padding="SAME", activation=ACT)(bottom_inputs)
+    
     for i, filters in enumerate(layers):
-           bot_latent = Conv2DTranspose(filters=filters, kernel_size=4, strides=2, padding="same", 
-                                        activation=ACT, name="convT{}".format(i + 1))(bot_latent)
-    y=BatchNormalization()(bot_latent)
-    y=Conv2D(filters=128, kernel_size=1,padding="SAME", activation=ACT)(y)
-    reconstructed =Conv2D(filters=3, kernel_size=1,padding="same", activation=ACT, name='output')(y)
-    decoder=Model(inputs=[Top_inputs,Middle_inputs,Bottom_inputs], outputs=reconstructed, name='decoder')
+           bot_upsample = Conv2DTranspose(filters=filters, kernel_size=4, strides=2, padding="same", 
+                                        activation=ACT, name="convT{}".format(i + 1))(bot_upsample)
+           bot_upsample=BatchNormalization()(bot_upsample)
+
+    
+    #y=Concatenate(axis=-1)([bot_upsample, mid_upsample, top_upsample])
+    y=tf.keras.layers.Add()([bot_upsample, mid_upsample, top_upsample])
+    y=Conv2D(filters=256, kernel_size=1, activation=ACT)(y)
+    y=Conv2D(filters=256, kernel_size=1, activation=ACT)(y)
+    y=Conv2D(filters=256, kernel_size=1, activation=ACT)(y)
+    y=BatchNormalization()(y)
+    reconstructed=Conv2D(filters=3, kernel_size=1,padding="same", activation=ACT, name='output')(y)
+    
+    decoder=Model(inputs=[top_inputs,middle_inputs,bottom_inputs], outputs=reconstructed, name='decoder')
     return decoder
- 
  
 def build_VQVAE(top_encoder, top_quantizer, mid_encoder, mid_quantizer, bottom_encoder, bottom_quantizer,decoder):    
     input_shape=image_shape
