@@ -25,7 +25,7 @@ def gated_block(v_stack_in, h_stack_in, out_dim, kernel, mask='b', residual=True
     """Implementation of the basic gated pixelcnn block following sect. 2 of TEXT- AND STRUCTURE-CONDITIONAL PIXELCNN,
     S. Reed, A. van den Oord, N. Kalchbrenner, V. Bapst, M. Botvinick, N. de Freitas Google DeepMind"""
 
-    if residual: 
+    if residual:
         v_attention=CausalAttentionModule(out_dim, mask,dilation=2)(v_stack_in)
         v_stack_in=v_stack_in+v_attention
         h_attention=CausalAttentionModule(out_dim, mask,dilation=2)(h_stack_in)
