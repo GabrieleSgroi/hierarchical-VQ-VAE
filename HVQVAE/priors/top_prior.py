@@ -57,9 +57,11 @@ def gated_block(v_stack_in, h_stack_in, out_dim, kernel, mask='b', residual=True
 
 
 def build_top_prior(num_layers=PIXELCNN_NUM_BLOCKS, num_feature_maps=PIXELCNN_NUM_FEATURE_MAPS):
+    
     pixelcnn_prior_inputs = Input(shape=(latent_shape[0],latent_shape[1]), name='pixelcnn_prior_inputs', dtype=tf.int64)
     z_q =codebook_from_index(top_codebook, pixelcnn_prior_inputs) # maps indices to the actual codebook
     v_stack_in, h_stack_in = z_q, z_q
+    
     for i in range(0,num_layers):
         mask = 'b' if i > 0 else 'a'
         kernel_size = 3 if i > 0 else 7
