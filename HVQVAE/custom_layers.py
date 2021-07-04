@@ -40,12 +40,13 @@ class CBAM(tf.keras.layers.Layer):
         self.MLP = self.build_MLP()
         self.conv=tf.keras.layers.Conv2D(filters=filter_size, kernel_size=kernel_size,padding='same',
                                          dilation_rate=dilation, activation='sigmoid')
+        self.renorm=renorm
 
     def build_MLP(self):
         inputs=tf.keras.layers.Input(shape=self.filter_size)
         dense=tf.keras.layers.Dense(self.filter_size//self.reduction, activation=self.activation)(inputs)
         dense=tf.keras.layers.Dense(self.filter_size, activation=self.activation)(dense)
-        dense=tf.keras.layers.BatchNormalization(renorm=renorm)(dense) 
+        dense=tf.keras.layers.BatchNormalization(renorm=self.renorm)(dense) 
         dense=tf.keras.layers.Reshape((1,1,self.filter_size))(dense)
 
         MLP=tf.keras.Model(inputs=inputs, outputs=dense)
