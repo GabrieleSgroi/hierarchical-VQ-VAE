@@ -89,6 +89,6 @@ def build_top_prior(num_layers=PIXELCNN_NUM_BLOCKS, num_feature_maps=PIXELCNN_NU
     
     pixelcnn_prior = Model(inputs=pixelcnn_prior_inputs, outputs=fc, name='pixelcnn-prior')
     # Distribution to sample from the pixelcnn
-
+    return pixelcnn_prior
 
 
