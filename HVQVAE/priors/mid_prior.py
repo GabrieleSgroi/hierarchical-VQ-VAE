@@ -68,7 +68,7 @@ def build_mid_prior(num_layers=20, num_feature_maps=128):
    Top_input=Input(shape=(top_latent_shape[0], top_latent_shape[1]), name='conditional_input', dtype=tf.int64)
    cq=codebook_from_index(top_codebook, Top_input)
    cq=Conv2D(kernel_size=3, filters=num_feature_maps, activation=ACT, padding='same')(cq)
-   attention=CBAM(num_feature_maps, activation=ACT, dilation=2, kernel_size=5)(cq)
+   attention=CBAM(num_feature_maps, activation=ACT, dilation=2, kernel_size=5, renorm=True)(cq)
    cq=Conv2D(kernel_size=3, filters=num_feature_maps, activation=ACT, padding='same')(cq+attention)
    cq=Conv2DTranspose(kernel_size=4, filters=num_feature_maps*2, strides=2, padding='same', activation=ACT)(cq)
    cq=BatchNormalization(renorm=True)(cq)
