@@ -45,7 +45,7 @@ class CBAM(tf.keras.layers.Layer):
         inputs=tf.keras.layers.Input(shape=self.filter_size)
         dense=tf.keras.layers.Dense(self.filter_size//self.reduction, activation=self.activation)(inputs)
         dense=tf.keras.layers.Dense(self.filter_size, activation=self.activation)(dense)
-        dense=tf.keras.layers.BatchNormalization(renorm)(dense) 
+        dense=tf.keras.layers.BatchNormalization(renorm=renorm)(dense) 
         dense=tf.keras.layers.Reshape((1,1,self.filter_size))(dense)
 
         MLP=tf.keras.Model(inputs=inputs, outputs=dense)
