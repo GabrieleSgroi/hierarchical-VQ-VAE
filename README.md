@@ -1,6 +1,6 @@
 # Hierarchical VQ-VAE
 ## Introduction
-Custom implementation of a 3-level hierarchical Vector Qantized Variational Autoencoder based on the concepts introduced in [ Generating Diverse High-Fidelity Images with VQ-VAE-2](https://arxiv.org/pdf/1906.00446.pdf). The model and the PixelCNN priors are customized such that they can be trained, retaining reasonable performance for large 512x512 images, on free TPU and GPU machines offered on Kaggle and Colab. The model has been trained on the image data of the Kaggle competition [Humpback Whale Identification](https://www.kaggle.com/c/humpback-whale-identification) as this dataset offered a reasonable number of high resolution images.  
+Custom implementation of a 3-level hierarchical Vector Qantized Variational Autoencoder (VQ-VAE) based on the concepts introduced in [ Generating Diverse High-Fidelity Images with VQ-VAE-2](https://arxiv.org/pdf/1906.00446.pdf). The model and the PixelCNN priors are customized such that they can be trained, retaining reasonable performance for large 512x512 images, on free TPU and GPU machines offered on Kaggle and Colab. The model has been trained on the image data of the Kaggle competition [Humpback Whale Identification](https://www.kaggle.com/c/humpback-whale-identification) as this dataset offered a reasonable number of high resolution images.  
 
 ## VQ-VAE architecture
 The building block of the architecture are defined in hierarchical-VQ-VAE/HVQVAE/architecture.py. <br>
