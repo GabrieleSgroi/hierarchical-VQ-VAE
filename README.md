@@ -9,6 +9,11 @@ Vectors in each latent space are passed to the quantizers corresponding to the r
 The end result is each 512x512 RGB image is compressed to 3 images of dimension 16x16, 32x32, 64x64 in which each pixel is just an integer number up to 512, 128 or 64 respectively. <br>
 The decoder takes the quantized compressed images (in which each pixel now corresponds to one of the vectors in the appropriate codebook) from the 3 levels and, by rescaling them to the original 512x512 size through transposed convolutional layers, tries to reconstruct the original 512x512 RGB image passed to the encoders.
 
+<p align="center">
+<img src="codes.png" alt="Codes and reconstruction"> <br>
+Visualization of embedding an image into latent codes and the reconstructed image from these. Original image from the Humpback Whale Identification dataset.
+</p>
+
 ## PixelCNN Priors
 
 To learn the priors over the latent spaces, 3 autoregressive PixelCNN models based on [Conditional Image Generation with PixelCNN Decoders](https://arxiv.org/pdf/1606.05328.pdf) were trained. Due to hardware constraints the PixelCNN used differ significativily from the Pixel Snail used in the original VQ-VAE-2 paper. In particular multihead self-attention, requiring a lot of resources, was not used. To incorporate information from the global structure of the image, instead it was used a more lightweight attention mechanism based on a causal modification of [CBAM: Convolutional Block Attention Module](https://arxiv.org/abs/1807.06521) toghether with dilated convolutions. <br>
