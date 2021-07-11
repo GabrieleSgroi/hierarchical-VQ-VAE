@@ -11,7 +11,7 @@ The decoder takes the quantized compressed images (in which each pixel now corre
 
 <p align="center">
 <img src="codes.png" alt="Codes and reconstruction"> <br>
-Visualization of embedding an image into latent codes and the reconstructed image from these. Original image from the Humpback Whale Identification dataset.
+Example of embedding latent codes and image reconstructed from these. Original image from the Humpback Whale Identification dataset.
 </p>
 
 ## PixelCNN Priors
