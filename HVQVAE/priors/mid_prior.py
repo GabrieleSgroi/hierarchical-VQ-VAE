@@ -44,7 +44,8 @@ def gated_block(v_stack_in, h_stack_in, out_dim, conditional, kernel,dilation=1,
                            activation=ACT, name="v_masked_conv_{}".format(i))(v_stack)
     vBN=BatchNormalization(renorm=True)(v_stack+Extraconv+conditional)
     v_stack_out = GateActivation()(vBN)
-    
+    v_stack_out=Dropout(0.2)(v_stack_out)
+
     h_stack = MaskedConv2D( mask,filters=out_dim * 2,dilation_rate=dilation, padding='same',
                            kernel_size=(1,kernel),activation=ACT, name="h_masked_conv_{}".format(i))(h_stack_in)
 
@@ -56,28 +57,28 @@ def gated_block(v_stack_in, h_stack_in, out_dim, conditional, kernel,dilation=1,
     skip=Conv2D(filters=out_dim, kernel_size=1, strides=(1, 1), activation=ACT)(h_stack_out)
 
     h_stack_out = Conv2D(filters=out_dim, kernel_size=1, strides=(1, 1), activation=ACT, name="res_conv_{}".format(i))(h_stack_out)
-    
+    h_stack_out=Dropout(0.2)(h_stack_out)
+
     if residual:
         h_stack_out += h_stack_in
     
     return v_stack_out, h_stack_out,skip
 
 
+
 def build_mid_prior(num_layers=20, num_feature_maps=128):
    pixelcnn_prior_inputs = Input(shape=(mid_latent_shape[0], mid_latent_shape[1]), name='pixelcnn_prior_inputs', dtype=tf.int64)
    Top_input=Input(shape=(top_latent_shape[0], top_latent_shape[1]), name='conditional_input', dtype=tf.int64)
    cq=codebook_from_index(top_codebook, Top_input)
-   cq=Conv2D(kernel_size=3, filters=num_feature_maps, activation=ACT, padding='same')(cq)
-   attention=CBAM(num_feature_maps, activation=ACT, dilation=2, kernel_size=5, renorm=True)(cq)
-   cq=Conv2D(kernel_size=3, filters=num_feature_maps, activation=ACT, padding='same')(cq+attention)
+   z_q =codebook_from_index(mid_codebook, pixelcnn_prior_inputs)
+   cq=Conv2D(kernel_size=1, filters=num_feature_maps*2, activation=ACT)(cq)
    cq=Conv2DTranspose(kernel_size=4, filters=num_feature_maps*2, strides=2, padding='same', activation=ACT)(cq)
    cq=BatchNormalization(renorm=True)(cq)
-   z_q =codebook_from_index(mid_codebook, pixelcnn_prior_inputs)
    v_stack_in, h_stack_in = z_q, z_q
    for i in range(0,num_layers):
         if i%5==2:
             dilation=2
-        elif i%5==3:
+        elif i%5==4:
             dilation=3
         else:
             dilation=1
@@ -93,14 +94,15 @@ def build_mid_prior(num_layers=20, num_feature_maps=128):
         else:
             skip+=skipped
    
-   uplifting=Conv2D(filters= num_feature_maps, kernel_size=1, activation=ACT, padding="same")(cq)
    skip=BatchNormalization(renorm=True)(skip)
    fc = Conv2D(filters=num_feature_maps, kernel_size=1,padding='same', activation=ACT)(skip)
    attention=CausalAttentionModule(num_feature_maps,dilation=2, mask_type='b')(fc)
    fc = Conv2D(filters=num_feature_maps, kernel_size=1,padding='same', activation=ACT)(fc+attention)
    attention=CausalAttentionModule(num_feature_maps,dilation=2,mask_type='b')(fc)
-   fc = Conv2D(filters=2*num_feature_maps, kernel_size=1,padding='same', activation=ACT)(fc+attention+uplifting)
+   fc = Conv2D(filters=2*num_feature_maps, kernel_size=1,padding='same', activation=ACT)(fc+attention)
    fc=BatchNormalization(renorm=True)(fc)
+   fc=Dropout(0.2)(fc)
+
    fc2 = Conv2D(filters=KM, kernel_size=1, name="fc2")(fc) 
 
    pixelcnn_prior = Model(inputs=[Top_input,pixelcnn_prior_inputs], outputs=fc2, name='pixelcnn-prior')
