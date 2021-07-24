@@ -37,6 +37,7 @@ def gated_block(v_stack_in, h_stack_in, out_dim, kernel, mask='b', residual=True
     v_stack = MaskedConv2D(mask, filters=out_dim*2, kernel_size=(kernel, 1),padding="same", dilation_rate=dilation, activation=ACT, name="v_masked_conv_{}".format(i))(v_stack)
     vBN=BatchNormalization()(v_stack+Extraconv)
     v_stack_out = GateActivation()(vBN)
+    v_stack_out=Dropout(0.2)(v_stack_out)
 
 
     h_stack = MaskedConv2D(mask,filters=out_dim * 2, kernel_size=(1,kernel),activation=ACT,padding="same",dilation_rate=dilation, name="h_masked_conv_{}".format(i))(h_stack_in)
@@ -46,9 +47,10 @@ def gated_block(v_stack_in, h_stack_in, out_dim, kernel, mask='b', residual=True
     h_stack_out=GateActivation()(hBN)
     
     skip=Conv2D(filters=out_dim, kernel_size=1, activation=ACT)(h_stack_out)
-
-    h_stack_out = Conv2D(filters=out_dim, kernel_size=1, activation=ACT, name="res_conv_{}".format(i))(h_stack_out)
     
+    h_stack_out = Conv2D(filters=out_dim, kernel_size=1, activation=ACT, name="res_conv_{}".format(i))(h_stack_out)
+    h_stack_out=Dropout(0.2)(h_stack_out)
+
     if residual:
         h_stack_out += h_stack_in
     
@@ -61,16 +63,16 @@ def build_top_prior(num_layers=PIXELCNN_NUM_BLOCKS, num_feature_maps=PIXELCNN_NU
     pixelcnn_prior_inputs = Input(shape=(latent_shape[0],latent_shape[1]), name='pixelcnn_prior_inputs', dtype=tf.int64)
     z_q =codebook_from_index(top_codebook, pixelcnn_prior_inputs) # maps indices to the actual codebook
     v_stack_in, h_stack_in = z_q, z_q
-    for i in range(0,num_layers):
+        for i in range(0,num_layers):
         mask = 'b' if i > 0 else 'a'
         kernel_size = 3 if i > 0 else 7
         residual = True if i > 0 else False
         
-        if i % 5==1 or i %5==3:
+        if i%5==2 or i%5==4:
             dilation=2
-        else:
+        else: 
             dilation=1
-            
+        
         v_stack_in, h_stack_in, skipped = gated_block(v_stack_in, h_stack_in, num_feature_maps,
                             kernel=kernel_size, mask=mask, residual=residual,dilation=dilation, i=i + 1)
         if i==0:
@@ -80,11 +82,12 @@ def build_top_prior(num_layers=PIXELCNN_NUM_BLOCKS, num_feature_maps=PIXELCNN_NU
             
     skip=BatchNormalization()(skip)
     fc = Conv2D(filters=num_feature_maps, kernel_size=1,padding='same', activation=ACT)(skip)
-    attention=CausalAttentionModule(num_feature_maps,mask_type='b')(fc)
+    attention=CausalAttentionModule(num_feature_maps,mask_type='b', dilation=3)(fc)
     fc = Conv2D(filters=num_feature_maps, kernel_size=1,padding='same', activation=ACT)(fc+attention)
-    attention=CausalAttentionModule(num_feature_maps,mask_type='b')(fc)
+    attention=CausalAttentionModule(num_feature_maps,mask_type='b', dilation=3)(fc)
     fc = Conv2D(filters=2*num_feature_maps, kernel_size=1,padding='same', activation=ACT)(fc+skip+attention)
     fc=BatchNormalization()(fc)
+    fc=Dropout(0.2)(fc)
     fc = Conv2D(filters=KT, kernel_size=1, name="fc2")(fc) 
     # outputs logits for probabilities of codebook indices for each cell
     
