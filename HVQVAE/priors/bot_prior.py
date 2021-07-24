@@ -65,13 +65,11 @@ def build_bot_prior(num_layers=15, num_feature_maps=64):
     cm_q=codebook_from_index(mid_codebook, Mid_input)
     z_q =codebook_from_index(bot_codebook, pixelcnn_prior_inputs) # maps indices to the actual codebook
     
-    ct_q=Conv2D(filters=num_feature_maps, kernel_size=3, activation=ACT, padding="same")(ct_q)
-    attention=CBAM(num_feature_maps, activation=ACT, dilation=2, kernel_size=5, renorm=True)(ct_q)
-    ct_q=Conv2DTranspose(kernel_size=4, filters=num_feature_maps, strides=2, padding='same', activation=ACT)(ct_q+attention)
+    ct_q=Conv2D(filters=2*num_feature_maps, kernel_size=1, activation=ACT, padding="same")(ct_q)
+    ct_q=Conv2DTranspose(kernel_size=4, filters=num_feature_maps, strides=2, padding='same', activation=ACT)(ct_q)
     conditional=Concatenate(axis=-1)([ct_q, cm_q])
-    conditional=Conv2D(filters=num_feature_maps, kernel_size=3, activation=ACT, padding="same")(conditional)
-    attention=CBAM(num_feature_maps, activation=ACT, dilation=2, kernel_size=5, renorm=True)(conditional)
-    conditional=Conv2DTranspose(kernel_size=4, filters=2*num_feature_maps, strides=2, padding='same', activation=ACT)(conditional+attention)
+    conditional=Conv2D(filters=num_feature_maps*2, kernel_size=1, activation=ACT, padding="same")(conditional)
+    conditional=Conv2DTranspose(kernel_size=4, filters=2*num_feature_maps, strides=2, padding='same', activation=ACT)(conditional)
     conditional=BatchNormalization(renorm=True)(conditional)
 
     v_stack_in, h_stack_in = z_q, z_q
@@ -92,15 +90,14 @@ def build_bot_prior(num_layers=15, num_feature_maps=64):
         else:
             skip+=skipped
     
-    uplifting=Conv2D(filters= num_feature_maps, kernel_size=1, activation=ACT, padding="same")(conditional)
     skip=BatchNormalization(renorm=True)(skip)
     fc = Conv2D(filters=num_feature_maps, kernel_size=1,padding='same', activation=ACT)(skip)
+    attention=CausalAttentionModule(num_feature_maps,mask_type='b', dilation=5)(fc)
+    fc = Conv2D(filters=num_feature_maps, kernel_size=1,padding='same', activation=ACT)(fc+attention)
     attention=CausalAttentionModule(num_feature_maps,mask_type='b', dilation=4)(fc)
     fc = Conv2D(filters=num_feature_maps, kernel_size=1,padding='same', activation=ACT)(fc+attention)
     attention=CausalAttentionModule(num_feature_maps,mask_type='b', dilation=3)(fc)
-    fc = Conv2D(filters=num_feature_maps, kernel_size=1,padding='same', activation=ACT)(fc+attention)
-    attention=CausalAttentionModule(num_feature_maps,mask_type='b', dilation=2)(fc)
-    fc = Conv2D(filters=2*num_feature_maps, kernel_size=1,padding='same', activation=ACT)(fc+attention+uplifting)
+    fc = Conv2D(filters=2*num_feature_maps, kernel_size=1,padding='same', activation=ACT)(fc+attention)
     fc=BatchNormalization(renorm=True)(fc)
     fc = Conv2D(filters=KB, kernel_size=1)(fc)  
     # outputs logits for probabilities of codebook indices for each cell
