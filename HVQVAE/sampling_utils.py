@@ -1,3 +1,5 @@
+"""This module contains helpful functions to generate new images"""
+
 from HVQVAE.load_utils import load_decoder, load_top_quantizer, load_mid_quantizer, load_bot_quantizer
 from HVQVAE.utils import get_codebook, codebook_from_index
 import numpy as np
